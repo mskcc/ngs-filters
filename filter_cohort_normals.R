@@ -2,7 +2,6 @@
 
 ##########################################################################################
 ##########################################################################################
-# Craig Bielski
 # MSKCC CMO
 # Identify loci with 3 or more alternate reads in a FILLOUT .maf and 
 # annotate somatic variant calls accordingly
