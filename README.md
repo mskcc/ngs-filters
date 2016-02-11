@@ -2,7 +2,7 @@
 
 ## Rules
 * Never remove mutations from a maf
-* Filters (in the GATK sense of not removing mutations from a maf) may add many columns but the last should be TRUE/FALSE best-guess keep decision.
+* Filters (in the GATK sense of not removing mutations from a maf) may add many columns but the last should be TRUE/FALSE (KEEP/REJECT?) best-guess keep decision.
 
 ## Filter modules for WES:
   1. Filter common variants according to ExAC/EVS/1000Genomes
