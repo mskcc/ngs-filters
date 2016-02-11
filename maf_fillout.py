@@ -39,6 +39,8 @@ if genome == 'grch37':
 	genomePath = '/ifs/depot/assemblies/H.sapiens/GRCh37/grch37.fasta'
 if genome == 'b37':
 	genomePath = '/ifs/depot/assemblies/H.sapiens/b37/b37.fasta'
+if genome == 'b37_dmp':
+	genomePath = '/ifs/depot/assemblies/H.sapiens/b37_dmp/b37.fasta'
 
 ### Parse BAM files into string
 bamString = []
