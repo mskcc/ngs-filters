@@ -64,4 +64,4 @@ for bam in bams:
 
 ### Call GetBaseCountsMultiSample
 gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (n, genomePath, maf, output, bamString)
-# subprocess.call(gbcmCall, shell = True)
+subprocess.call(gbcmCall, shell = True)
