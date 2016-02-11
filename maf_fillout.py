@@ -17,11 +17,13 @@ parser.add_argument('-m', '--maf', help = 'MAF file on which to filllout', requi
 parser.add_argument('-b', '--bams', help = 'BAM files to fillout with', required = True, nargs='+')
 parser.add_argument('-g', '--genome', help = 'Reference assembly of BAM files, e.g. hg19/grch37/b37', required = True)
 parser.add_argument('-o', '--output', help = 'Prefix for output file', required = False)
+parser.add_argument('-n', '--n_threads', help = 'Multithread', default = 10, required = False)
 args = parser.parse_args()
 
 maf = args.maf
 bams = args.bams
 genome = args.genome
+n = args.n_threads
 if args.output is None:
 	output = os.path.splitext(os.path.basename(maf))[0]+'.fillout'
 else:
@@ -52,5 +54,6 @@ for bam in bams:
 		print 'Genome in '+bam+' does not agree with input genome'
 
 ### Call GetBaseCountsMultiSample
-gbcmCall = gbcmPath+' --thread 20 --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (genomePath, maf, output, bamString)
+gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % \
+	(n_threads, genomePath, maf, output, bamString)
 subprocess.call(gbcmCall, shell = True)
