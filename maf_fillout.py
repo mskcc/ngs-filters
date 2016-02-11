@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 maf = args.maf
 bams = args.bams
-genome = args.genome
+genome = args.genome.lower()
 n = args.n_threads
 if args.output is None:
 	output = os.path.splitext(os.path.basename(maf))[0]+'.fillout'
@@ -48,6 +48,13 @@ for bam in bams:
 	bamString.append('--bam '+os.path.splitext(os.path.basename(bam))[0]+':'+bam)
 bamString = string.join(bamString)
 
+### Check if MAF has right genome
+mafGenome = subprocess.check_output('grep -v ^# '+maf+' | tail -1 | cut -f4', shell = True)
+print genome
+print mafGenome.strip().lower()
+if mafGenome.strip().lower() is not genome:
+	print 'Genome build different from that in MAF file, might fail'
+
 ### Check if genome in BAM header 
 for bam in bams:
 	try:
@@ -57,4 +64,4 @@ for bam in bams:
 
 ### Call GetBaseCountsMultiSample
 gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (n, genomePath, maf, output, bamString)
-subprocess.call(gbcmCall, shell = True)
+# subprocess.call(gbcmCall, shell = True)
