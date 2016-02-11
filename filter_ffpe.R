@@ -98,7 +98,7 @@ if( ! interactive() ) {
     m <- identify_artifacts(maf, threshold = threshold)
     write.maf(format(m, digits=2), stdout())
   } else if(args$filter) {
-    maf <- filter_artifacts(maf)
+    maf.out <- filter_artifacts(maf)
     write.maf(maf.out, stdout())
   }
 
