@@ -1,5 +1,10 @@
 # wes-filters
-Filter modules for WES:
+
+## Rules
+* Never remove mutations from a maf
+* "Filter" (in the GATK sense of not removing mutations) may add many columns, the last should be TRUE/FALSE best-guess keep decision.
+
+## Filter modules for WES:
   1. Filter common variants according to ExAC/EVS/1000Genomes
   2. Filter against panel of WES normals
   3. Filter against cohort-specific panel of normals
