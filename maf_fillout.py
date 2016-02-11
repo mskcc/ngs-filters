@@ -34,7 +34,7 @@ gbcmPath = '/home/socci/Code/Zeng/GetBaseCountsMultiSample/GetBaseCountsMultiSam
 
 ### Set genome path
 if genome == 'hg19':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/hg19/hg19.fasta'
+	genomePath = '/common/data/assemblies/H.sapiens/hg19/hg19.fasta'
 if genome == 'grch37':
 	genomePath = '/ifs/depot/assemblies/H.sapiens/GRCh37/grch37.fasta'
 if genome == 'b37':
@@ -54,6 +54,5 @@ for bam in bams:
 		print 'Genome in '+bam+' does not agree with input genome'
 
 ### Call GetBaseCountsMultiSample
-gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % \
-	(n_threads, genomePath, maf, output, bamString)
+gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (n, genomePath, maf, output, bamString)
 subprocess.call(gbcmCall, shell = True)

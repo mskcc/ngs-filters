@@ -49,7 +49,7 @@ parse_fillout <- function(fillout) {
   # Note, variant might be present mutliple times if occuring in more than one sample // fix this at the fillout step
   # by de-duping the MAF?
   fillout = mutate(fillout, tmp_id = str_c(Tumor_Sample_Barcode, Chrom, Start, Ref, Alt, Gene))
-  fillout = fillout[!duplicated(fillout$tmp_id,]
+  fillout = fillout[!duplicated(fillout$tmp_id),]
 
   # Calculate frequencies and return
   group_by(fillout, TAG) %>%
