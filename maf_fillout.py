@@ -44,6 +44,13 @@ for bam in bams:
 	bamString.append('--bam '+os.path.splitext(os.path.basename(bam))[0]+':'+bam)
 bamString = string.join(bamString)
 
+### Check if genome in BAM header 
+for bam in bams:
+	try:
+		out = subprocess.check_output('samtools view -H '+bam+' | grep '+genome, shell = True)
+	except subprocess.CalledProcessError:
+		print 'Genome in '+bam+' does not agree with input genome'
+
 ### Call GetBaseCountsMultiSample
 gbcmCall = gbcmPath+' --thread 20 --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (genomePath, maf, output, bamString)
 subprocess.call(gbcmCall, shell = True)
