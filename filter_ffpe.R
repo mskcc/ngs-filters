@@ -23,27 +23,28 @@ add_Mut_Tri <- function(maf){
       stop("must have either Ref_Tri or TriNuc column")
     }
   }
-  maf <- maf[Variant_Type == "SNP"]
-  maf[, TriNuc_CT := ifelse(Reference_Allele %in% c("G", "A"),
-                            as.character(
-                              Biostrings::reverseComplement(
-                                Biostrings::DNAStringSet(TriNuc)
-                              )
-                            ),
-                            TriNuc)
+  # maf <- maf[Variant_Type == "SNP"]
+  maf[, c('TriNuc_CT', 'Tumor_Seq_Allele2_CT', 'Mut_Tri') := 'X']
+  maf[Variant_Type == "SNP", TriNuc_CT := ifelse(Reference_Allele %in% c("G", "A"),
+                                                 as.character(
+                                                   Biostrings::reverseComplement(
+                                                     Biostrings::DNAStringSet(TriNuc)
+                                                     )
+                                                   ),
+                                                 TriNuc)
       ]
-  maf[, Tumor_Seq_Allele2_CT := ifelse(Reference_Allele %in% c("G", "A"),
-                                       as.character(
-                                         Biostrings::reverseComplement(
-                                           Biostrings::DNAStringSet(Tumor_Seq_Allele2)
-                                         )
-                                       ),
-                                       Tumor_Seq_Allele2)
+  maf[Variant_Type == "SNP", Tumor_Seq_Allele2_CT := ifelse(Reference_Allele %in% c("G", "A"),
+                                                            as.character(
+                                                              Biostrings::reverseComplement(
+                                                                Biostrings::DNAStringSet(Tumor_Seq_Allele2)
+                                                                )
+                                                              ),
+                                                            Tumor_Seq_Allele2)
       ]
 
-  maf[, Mut_Tri := paste0(substr(TriNuc_CT, 1, 2),
-                          Tumor_Seq_Allele2_CT,
-                          substr(TriNuc_CT, 3, 3))]
+  maf[Variant_Type == "SNP", Mut_Tri := paste0(substr(TriNuc_CT, 1, 2),
+                                               Tumor_Seq_Allele2_CT,
+                                               substr(TriNuc_CT, 3, 3))]
   maf
 }
 
@@ -71,7 +72,7 @@ filter_artifacts <- function(maf, threshold = 0.1){
 
 if( ! interactive() ) {
 
-  pkgs = c('data.table', 'argparse')
+  pkgs = c('data.table', 'argparse', 'Biostrings')
   junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
 
@@ -98,6 +99,7 @@ if( ! interactive() ) {
     m <- identify_artifacts(maf, threshold = threshold)
     write.maf(format(m, digits=2), stdout())
   } else if(args$filter) {
+    maf <- add_Mut_Tri(maf)
     maf.out <- filter_artifacts(maf)
     write.maf(maf.out, stdout())
   }
