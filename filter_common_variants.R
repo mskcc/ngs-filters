@@ -35,7 +35,7 @@ annotate_maf <- function(maf, flagged) {
 if( ! interactive() ) {
   
   pkgs = c('data.table', 'argparse')
-  junk <- lapply(pkgs, require, character.only = T)
+  junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
   
   parser=ArgumentParser()

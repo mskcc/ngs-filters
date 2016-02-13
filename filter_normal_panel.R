@@ -11,22 +11,19 @@
 annotate_maf <- function(maf, fillout, 
                          normal.count=3) {
   
-  # select normal samples
-  if (!is.na(normal.regex)) {
-    fillout <- fillout[Tumor_Sample_Barcode %like% normal]
-  } else {
-    fillout <- fillout[Tumor_Sample_Barcode %like% "*N$"]
-  }
-  
   # identify loci with 3+ alternate reads in any normal sample
   fillout <- fillout[normal_count >= normal.count]
   
-  # index
-  fillout[, TAG := stringr::str_c('chr', Chromosome,
+  # Add TAG to MAF
+  if (!('TAG' %in% names(maf))) {
+    maf[, TAG := str_c('chr', Chromosome,
                                   ':', Start_Position,
                                   '-', End_Position,
                                   ':', Reference_Allele,
                                   ':', Tumor_Seq_Allele2)]
+    
+    
+  }
   
   normal_panel.blacklist <- unique(fillout$TAG)
   maf.annotated <- maf[, normal_panel := TAG %in% normal_panel.blacklist]
@@ -39,28 +36,30 @@ parse_fillout <- function(fillout) {
 
   # Convert GetBaseCountsMultiSample output
   fillout = melt(fillout, id.vars = colnames(fillout)[1:34], variable.name = 'Tumor_Sample_Barcode') %>%
-    separate(value, into = c('t_depth','t_ref_count','t_alt_count','t_var_freq'), sep = ';') %>%
-    mutate(t_depth = str_extract(t_depth, regex('[0-9].*')) %>%
-    mutate(t_ref_count = str_extract(t_ref_count, regex('[0-9].*')) %>%
-    mutate(t_alt_count = str_extract(t_alt_count, regex('[0-9].*')) %>%
-    mutate(t_var_freq = str_extract(t_var_freq, regex('[0-9].*')) %>%
-    mutate(TAG = str_c('chr', Chromosome, ':', Start, '-', Start, ':', 'Ref', ':', 'Alt')) 
+    separate(value, into = c('n_depth','n_ref_count','n_alt_count','n_var_freq'), sep = ';') %>%
+    mutate(n_depth = str_extract(n_depth, regex('[0-9].*'))) %>%
+    mutate(n_ref_count = str_extract(n_ref_count, regex('[0-9].*'))) %>%
+    mutate(n_alt_count = str_extract(n_alt_count, regex('[0-9].*'))) %>%
+    mutate(n_var_freq = str_extract(n_var_freq, regex('[0-9].*'))) %>%
+    mutate(TAG = str_c(Chrom, ':', Start, '-', Start, ':', Ref, ':', Alt)) 
 
-  # Note, variant might be present mutliple times if occuring in more than one sample // fix this at the fillout step
+  # Note, variant might be present mutliple times if occuring in more than one sample, fix this at the fillout step
   # by de-duping the MAF?
   fillout = mutate(fillout, tmp_id = str_c(Tumor_Sample_Barcode, Chrom, Start, Ref, Alt, Gene))
   fillout = fillout[!duplicated(fillout$tmp_id),]
 
   # Calculate frequencies and return
   group_by(fillout, TAG) %>%
-    summarize(normal_count = sum(t_alt_count>=3), avg_depth = mean(t_depth), avg_alt_count = mean(t_alt_count))
+    summarize(normal_count = sum(n_alt_count>=3),
+      avg_n_depth = mean(n_depth, na.rm = T),
+      avg_n_alt_count = mean(n_alt_count, na.rm = T))
 
 }
 
 if( ! interactive() ) {
   
-  pkgs = c('data.table', 'argparse', 'reshape2', 'dplyr', 'tidyr')
-  junk <- lapply(pkgs, require, character.only = T)
+  pkgs = c('data.table', 'argparse', 'reshape2', 'dplyr', 'tidyr', 'stringr')
+  junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
   
   parser=ArgumentParser()

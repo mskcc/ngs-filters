@@ -50,8 +50,8 @@ bamString = string.join(bamString)
 
 ### Check if MAF has right genome
 mafGenome = subprocess.check_output('grep -v ^# '+maf+' | tail -1 | cut -f4', shell = True)
-print genome
-print mafGenome.strip().lower()
+print 'Using '+genome
+print 'MAF genome seems to be '+mafGenome.strip().lower()
 if mafGenome.strip().lower() is not genome:
 	print 'Genome build different from that in MAF file, might fail'
 

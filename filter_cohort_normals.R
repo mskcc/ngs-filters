@@ -22,6 +22,15 @@ annotate_maf <- function(maf, fillout,
   # identify loci with 3+ alternate reads in any normal sample
   fillout <- fillout[t_alt_count >= alt.reads]
   
+  # Add TAG to MAF 
+  if (!('TAG' %in% names(maf))) {
+    maf[, TAG := stringr::str_c('chr', Chromosome,
+                                    ':', Start_Position,
+                                    '-', End_Position,
+                                    ':', Reference_Allele,
+                                    ':', Tumor_Seq_Allele2)]
+  }
+
   # index
   fillout[, TAG := stringr::str_c('chr', Chromosome,
                                   ':', Start_Position,
@@ -39,7 +48,7 @@ annotate_maf <- function(maf, fillout,
 if( ! interactive() ) {
   
   pkgs = c('data.table', 'argparse')
-  junk <- lapply(pkgs, require, character.only = T)
+  junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
   
   parser=ArgumentParser()
