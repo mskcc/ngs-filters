@@ -40,7 +40,7 @@ parse_fillout <- function(fillout) {
     mutate(t_ref_count = str_extract(t_ref_count, regex('[0-9].*'))) %>%
     mutate(t_alt_count = str_extract(t_alt_count, regex('[0-9].*'))) %>%
     mutate(t_var_freq = str_extract(t_var_freq, regex('[0-9].*'))) %>%
-    mutate(TAG = str_c(Chrom, ':', Start, '-', Start, ':', Ref, ':', Alt)) 
+    mutate(TAG = str_c('chr', Chrom, ':', Start, '-', Start, ':', Ref, ':', Alt)) 
 
   # Note, variant might be present mutliple times if occuring in more than one sample, fix this at the fillout step
   # by de-duping the MAF?
