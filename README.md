@@ -9,5 +9,6 @@
   2. Filter against panel of WES normals
   3. Filter against cohort-specific panel of normals
   4. Filter FFPE artifacts (includes deep-sequenced FFPE pool)
+  5. Filter mutations in regions of low mappability (provenance: https://www.encodeproject.org/annotations/ENCSR636HFF/)
 
 ![Alt Text](http://i.giphy.com/14bJDgZJb8SI4E.gif)
