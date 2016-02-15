@@ -65,7 +65,8 @@ identify_artifacts <- function(maf, threshold = 0.1){
 
 #' Remove low allele fraction mutations with the C>T context
 filter_artifacts <- function(maf, threshold = 0.1){
-  maf[, ffpe_artifact := t_var_freq > threshold | ! Mut_Tri %like% ".CT."]
+  # maf[, ffpe_artifact := t_var_freq > threshold | ! Mut_Tri %like% ".CT."]
+  maf[, ffpe_artifact := t_var_freq <= threshold & Mut_Tri %like% ".CT."]
   maf
 }
 
