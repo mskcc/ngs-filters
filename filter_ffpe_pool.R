@@ -7,12 +7,12 @@
 ##########################################################################################
 ##########################################################################################
 
-annotate_maf <- function(maf, fillout, 
+annotate_maf <- function(maf, fillout,
                          ffpe.count=3) {
-  
+
   # identify loci with 3+ alternate reads in any normal sample
   fillout <- fillout[t_alt_count >= ffpe.count]
-  
+
   # Add TAG to MAF
   if (!('TAG' %in% names(maf))) {
     maf[, TAG := str_c('chr', Chromosome,
@@ -20,15 +20,13 @@ annotate_maf <- function(maf, fillout,
                                   '-', End_Position,
                                   ':', Reference_Allele,
                                   ':', Tumor_Seq_Allele2)]
-    
-    
   }
-  
+
   ffpe_pool.blacklist <- unique(fillout$TAG)
   maf.annotated <- maf[, ffpe_pool := TAG %in% ffpe_pool.blacklist]
-  
+
   return(maf.annotated)
-  
+
 }
 
 parse_fillout <- function(fillout) {
@@ -40,7 +38,7 @@ parse_fillout <- function(fillout) {
     mutate(t_ref_count = str_extract(t_ref_count, regex('[0-9].*'))) %>%
     mutate(t_alt_count = str_extract(t_alt_count, regex('[0-9].*'))) %>%
     mutate(t_var_freq = str_extract(t_var_freq, regex('[0-9].*'))) %>%
-    mutate(TAG = str_c('chr', Chrom, ':', Start, '-', Start, ':', Ref, ':', Alt)) 
+    mutate(TAG = str_c('chr', Chrom, ':', Start, '-', Start, ':', Ref, ':', Alt))
 
   # Note, variant might be present mutliple times if occuring in more than one sample, fix this at the fillout step
   # by de-duping the MAF?
@@ -52,28 +50,28 @@ parse_fillout <- function(fillout) {
 }
 
 if( ! interactive() ) {
-  
+
   pkgs = c('data.table', 'argparse', 'reshape2', 'dplyr', 'tidyr', 'stringr')
   junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
-  
+
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file')
   parser$add_argument('-f', '--fillout', type='character', help='GetBaseCountsMultiSample output')
   parser$add_argument('-r', '--read_count', type='character', default=3, help='FFPE pool read-count threshold')
   parser$add_argument('-o', '--outfile', type='character', help='Output file')
   args=parser$parse_args()
-  
+
   maf <- fread(args$maf)
   fillout <- fread(args$fillout)
   alt.reads <- args$normals
   outfile <- args$outfile
-  
+
   parsed_fillout = parse_fillout(fillout)
 
   maf.out <- annotate_maf(maf, parsed_fillout)
-  write.table(maf.out, outfile, sep = "\t", 
+  write.table(maf.out, outfile, sep = "\t",
               col.names = T, row.names = F,
               quote = F)
-  
+
 }
