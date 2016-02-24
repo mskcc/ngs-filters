@@ -1,13 +1,12 @@
 #!/usr/bin/env Rscript
 
 ##########################################################################################
-##########################################################################################
 # MSKCC CMO
 # Annotate common_variants identified by maf2maf
 ##########################################################################################
-##########################################################################################
 
-annotate_maf <- function(maf, flagged) {
+annotate_maf <- function(maf) {
+
     # Add TAG to MAF
     if (!('TAG' %in% names(maf))) {
         maf[, TAG := str_c('chr', Chromosome,
@@ -21,28 +20,25 @@ annotate_maf <- function(maf, flagged) {
     maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & low_confidence == TRUE, 'low_confidence',
                                             ifelse(FILTER != '.' & low_confidence == TRUE,
                                                    paste0(FILTER, ',low_confidence'), FILTER))]
-
-    return(maf.annotated)
+        return(maf.annotated)
 }
 
-if( ! interactive() ) {
+if (!interactive()) {
 
-    pkgs = c('data.table', 'argparse')
+    pkgs = c('data.table', 'argparse', 'stringr')
     junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
     rm(junk)
 
     parser=ArgumentParser()
-    parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file')
-    parser$add_argument('-o', '--outfile', type='character', help='Output file')
+    parser$add_argument('-m', '--maf', type = 'character', help = 'SOMATIC_FACETS.vep.maf file', default = 'stdin')
+    parser$add_argument('-o', '--outfile', type = 'character', help = 'Output file', default = 'stdout')
     args=parser$parse_args()
 
-    maf <- fread(args$maf)
-    flagged <- fread(args$flagged)
+    if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
+    } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
     outfile <- args$outfile
 
-    maf.out <- annotate_maf(maf, flagged)
-    write.table(maf.out, outfile, sep = "\t",
-                col.names = T, row.names = F,
-                quote = F)
-
+    maf.out <- annotate_maf(maf)
+    if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
+    } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
 }

@@ -1,10 +1,8 @@
 #!/usr/bin/env Rscript
 
 ##########################################################################################
-##########################################################################################
 # MSKCC CMO
 # Identify variant present in 3 or more alternate reads in deep-sequenced FFPE pool
-##########################################################################################
 ##########################################################################################
 
 annotate_maf <- function(maf, fillout,
@@ -16,10 +14,10 @@ annotate_maf <- function(maf, fillout,
   # Add TAG to MAF
   if (!('TAG' %in% names(maf))) {
     maf[, TAG := str_c('chr', Chromosome,
-                                  ':', Start_Position,
-                                  '-', End_Position,
-                                  ':', Reference_Allele,
-                                  ':', Tumor_Seq_Allele2)]
+                       ':', Start_Position,
+                       '-', End_Position,
+                       ':', Reference_Allele,
+                       ':', Tumor_Seq_Allele2)]
   }
 
   ffpe_pool.blacklist <- unique(fillout$TAG)
@@ -56,22 +54,21 @@ if( ! interactive() ) {
   rm(junk)
 
   parser=ArgumentParser()
-  parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file')
+  parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
   parser$add_argument('-f', '--fillout', type='character', help='GetBaseCountsMultiSample output')
   parser$add_argument('-r', '--read_count', type='character', default=3, help='FFPE pool read-count threshold')
-  parser$add_argument('-o', '--outfile', type='character', help='Output file')
+  parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
   args=parser$parse_args()
 
-  maf <- fread(args$maf)
-  fillout <- fread(args$fillout)
+  if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
+  } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
+  fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
   alt.reads <- args$normals
   outfile <- args$outfile
 
   parsed_fillout = parse_fillout(fillout)
 
   maf.out <- annotate_maf(maf, parsed_fillout)
-  write.table(maf.out, outfile, sep = "\t",
-              col.names = T, row.names = F,
-              quote = F)
-
+  if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
+  } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
 }

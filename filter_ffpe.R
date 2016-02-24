@@ -1,12 +1,8 @@
 #!/usr/bin/env Rscript
 
 ##########################################################################################
-##########################################################################################
-# Alex Penson
 # MSKCC CMO
-# Identify samples with FFPE artifacts
-# or filter the artifacts from a maf file.
-##########################################################################################
+# Identify samples with FFPE artifacts or filter the artifacts from a maf file.
 ##########################################################################################
 
 write.maf <- function (...) {
@@ -15,8 +11,9 @@ write.maf <- function (...) {
 }
 
 #' Annotate maf with Stratton Plot bin
-add_Mut_Tri <- function(maf){
-  if(! "TriNuc" %in% names(maf)){
+add_Mut_Tri <- function(maf) {
+
+    if(! "TriNuc" %in% names(maf)){
     if("Ref_Tri" %in% names(maf)){
       maf[, TriNuc := Ref_Tri]
     } else {
@@ -71,28 +68,22 @@ filter_artifacts <- function(maf, threshold = 0.1){
 }
 
 
-if( ! interactive() ) {
+if (!interactive()) {
 
   pkgs = c('data.table', 'argparse', 'Biostrings')
   junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
 
   parser=ArgumentParser()
-  parser$add_argument('-m', '--maf', type='character',
-                      help='SOMATIC_FACETS.vep.maf file')
-  parser$add_argument('-t', '--threshold', type='double', default = 10,
-                      help='allele fraction threshold (%)')
-  parser$add_argument('--identify', action="store_true", default = FALSE,
-                      help='Identify samples with FFPE artifacts')
-  parser$add_argument('--filter', action="store_true", default = FALSE,
-                      help='Filter FFPE artifacts')
+  parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file')
+  parser$add_argument('-t', '--threshold', type='double', default = 10, help='allele fraction threshold (%)')
+  parser$add_argument('--identify', action="store_true", default = FALSE, help='Identify samples with FFPE artifacts')
+  parser$add_argument('--filter', action="store_true", default = FALSE, help='Filter FFPE artifacts')
   args=parser$parse_args()
 
   threshold <- as.numeric(args$threshold) / 100
 
-  if(args$identify & args$filter){
-    stop("Cannot identify and filter at the same time")
-  }
+  if(args$identify & args$filter) stop("Cannot identify and filter at the same time")
 
   maf <- suppressWarnings(fread(args$maf, showProgress = F))
   if(args$identify) {
