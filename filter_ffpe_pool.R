@@ -20,8 +20,12 @@ annotate_maf <- function(maf, fillout,
                        ':', Tumor_Seq_Allele2)]
   }
 
+  if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
   ffpe_pool.blacklist <- unique(fillout$TAG)
   maf.annotated <- maf[, ffpe_pool := TAG %in% ffpe_pool.blacklist]
+  maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & ffpe_pool == TRUE, 'ffpe_pool',
+                                          ifelse(FILTER != '.' & ffpe_pool == TRUE,
+                                                 paste0(FILTER, ',ffpe_pool'), FILTER))]
 
   return(maf.annotated)
 

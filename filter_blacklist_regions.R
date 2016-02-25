@@ -12,12 +12,15 @@ annotate_maf <- function(maf, blacklist) {
 
   fo <- foverlaps(maf[, .(Chromosome, Start_Position, End_Position)],
                   blacklist,
-                  type="any")
+                  type = "any")
 
+  if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
   maf.annotated <- maf[, blacklist_region := fo$Info]
+  maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & !is.na(blacklist_region), 'blacklist_region',
+                                          ifelse(FILTER != '.' & !is.na(blacklist_region),
+                                                 paste0(FILTER, ',blacklist_region'), FILTER))]
 
   return(maf.annotated)
-
 }
 
 if( ! interactive() ) {
@@ -28,7 +31,7 @@ if( ! interactive() ) {
 
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
-  parser$add_argument('-b', '--blacklist', type='character', help='DAC Blacklisted Regions')
+  parser$add_argument('-b', '--blacklist', type='character', help='DAC Blacklisted Regions', default = 'ENCFF001TDO.bed')
   parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
   args=parser$parse_args()
 

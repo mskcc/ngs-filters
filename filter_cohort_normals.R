@@ -7,8 +7,8 @@
 ##########################################################################################
 
 annotate_maf <- function(maf, fillout,
-                         alt.reads=3,
-                         normal.regex=NA) {
+                         alt.reads = 3,
+                         normal.regex = NA) {
 
   # select normal samples
   if (!is.na(normal.regex)) {
@@ -36,8 +36,12 @@ annotate_maf <- function(maf, fillout,
                                   ':', Reference_Allele,
                                   ':', Tumor_Seq_Allele2)]
 
+  if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
   fillout.blacklist <- unique(fillout$TAG)
   maf.annotated <- maf[, cohort_normal := TAG %in% fillout.blacklist]
+  maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & cohort_normal == TRUE, 'cohort_normal',
+                                          ifelse(FILTER != '.' & cohort_normal == TRUE,
+                                                 paste0(FILTER, ',cohort_normal'), FILTER))]
 
   return(maf.annotated)
 
