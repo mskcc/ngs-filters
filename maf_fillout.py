@@ -62,6 +62,14 @@ for bam in bams:
 	except subprocess.CalledProcessError:
 		print 'Genome in '+bam+' does not agree with input genome'
 
+### Make a temporary simplified MAF
+uniqRscript = os.path.dirname(os.path.realpath(__file__))+'/maf_uniq_tags.R'
+uniqRCall = uniqRscript+' '+maf+' > ___tmp.maf'
+subprocess.call(uniqRCall, shell = True)
+
 ### Call GetBaseCountsMultiSample
-gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (n, genomePath, maf, output, bamString)
+gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf ___tmp.maf --output %s %s' % (n, genomePath, output, bamString)
 subprocess.call(gbcmCall, shell = True)
+
+### Remove temporary MAF
+# subprocess.call('rm -f ___tmp.maf', shell = True)
