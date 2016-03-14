@@ -4,6 +4,8 @@ suppressWarnings(library(data.table))
 suppressWarnings(library(stringr))
 args = commandArgs(TRUE)
 
+if (length(args) < 1) stop('Usage: maf_uniq_tags.R input.maf')
+
 maf = suppressWarnings(fread(args[1], showProgress = F))
 
 maf[, TAG := str_c('chr', Chromosome,

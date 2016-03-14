@@ -1,0 +1,18 @@
+Files used to flag variants called in troublesome regions for various
+technical reasons
+See: http://genome.ucsc.edu/cgi-bin/hgTrackUi?db=hg19&g=wgEncodeMapability
+
+# Duke blacklisted regions #
+# Annotation of genomic regions that are anomalous, unstructured, and/or have high signal/read counts in sequencing experiments.
+# File: wgEncodeDacMapabilityConsensusExcludable.bed
+wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeMapability/wgEncodeDacMapabilityConsensusExcludable.bed.gz
+gunzip wgEncodeDacMapabilityConsensusExcludable.bed.gz
+
+# RepeatMasker #
+# Annotation of repeat regions across the human genome. UCSC provides this version of hg19.fa.out.gz found at http://www.repeatmasker.org/species/hg.html.
+# File: rmsk.txt
+wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/rmsk.txt.gz
+gunzip rmsk.txt.gz
+cut -f6-8,12 rmsk.txt | grep -e "Low_complexity" -e "Simple_repeat" > rmsk_mod.txt
+subtractBed -a rmsk_mod.txt -b /ifs/work/socci/Depot/Targets/hg19/IMPACT_410_hg19/IMPACT_410_hg19_targets_plus5bp.bed > rmsk_mod.bed # subtract overlap with IMPACT410 
+rm rmsk.txt rmsk_mod.txt

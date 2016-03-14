@@ -16,18 +16,20 @@ add_mut_tri <- function(maf) {
         }
     }
 
+  if (!'t_var_freq' %in% names(maf)) maf[, t_var_freq := t_alt_count/(t_alt_count+t_ref_count)]
+
   maf[, c('TriNuc_CT', 'Tumor_Seq_Allele2_CT', 'Mut_Tri') := 'X']
-  maf[Variant_Type == "SNP",
+  maf[Variant_Type == "SNP" & !is.na(Reference_Allele) & !is.na(t_var_freq) & !is.na(TriNuc),
       TriNuc_CT := ifelse(Reference_Allele %in% c("G", "A"),
                           as.character(Biostrings::reverseComplement(Biostrings::DNAStringSet(TriNuc))),
                           TriNuc)]
 
-  maf[Variant_Type == "SNP",
+  maf[Variant_Type == "SNP" & !is.na(Reference_Allele) & !is.na(t_var_freq) & !is.na(Tumor_Seq_Allele2),
       Tumor_Seq_Allele2_CT := ifelse(Reference_Allele %in% c("G", "A"),
                                      as.character(Biostrings::reverseComplement(Biostrings::DNAStringSet(Tumor_Seq_Allele2))),
                                      Tumor_Seq_Allele2)]
 
-  maf[Variant_Type == "SNP",
+  maf[Variant_Type == "SNP" & !is.na(TriNuc_CT) & !is.na(Tumor_Seq_Allele2_CT),
       Mut_Tri := paste0(substr(TriNuc_CT, 1, 2),
                         Tumor_Seq_Allele2_CT,
                         substr(TriNuc_CT, 3, 3))]
@@ -86,7 +88,7 @@ if (!interactive()) {
     } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
 
     if(args$identify) {
-        maf <- add_Mut_Tri(maf)
+        maf <- add_mut_tri(maf)
         m <- identify_artifacts(maf, threshold = threshold)
         write.table(format(m, digits=2), stdout(), col.names = T, row.names = F, sep = '\t', quote = F)
     } else if(args$filter) {

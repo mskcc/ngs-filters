@@ -7,23 +7,33 @@
 
 annotate_maf <- function(maf, flagged = NULL) {
 
-  # check chrM
-  if (nrow(maf) == nrow(flagged) & length(setdiff(unique(maf$Chromosome), unique(flagged$Chromosome))) == 0) {
+    # check chrM
+    # if (nrow(maf) == nrow(flagged) & length(setdiff(unique(maf$Chromosome), unique(flagged$Chromosome))) == 0) {
 
-      maf.annotated <- maf[, common_variant := flagged$FILTER]
+    #     maf.annotated <- maf[, common_variant := flagged$FILTER]
 
-  } else { # chrM dropped by maf2maf
+    # } else { # chrM dropped by maf2maf
 
     # index
-    flagged[, TAG := stringr::str_c('chr', Chromosome,
+
+    if (!('TAG' %in% names(maf))) {
+        maf[, TAG := stringr::str_c('chr', Chromosome,
                                     ':', Start_Position,
                                     '-', End_Position,
                                     ':', Reference_Allele,
                                     ':', Tumor_Seq_Allele2)]
+    }
 
     if (!is.null(flagged)) {
+        flagged[, TAG := stringr::str_c('chr', Chromosome,
+                                        ':', Start_Position,
+                                        '-', End_Position,
+                                        ':', Reference_Allele,
+                                        ':', Tumor_Seq_Allele2)]
+
         common_variants <- flagged[FILTER == "common_variant"]$TAG
         maf[, common_variant := "."]
+
     } else {
         common_variants <- maf[ExAC_AF <= .0004]$TAG
     }
@@ -32,7 +42,6 @@ annotate_maf <- function(maf, flagged = NULL) {
     maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & common_variant == TRUE, 'common_variant',
                                             ifelse(FILTER != '.' & common_variant == TRUE,
                                                    paste0(FILTER, ',common_variant'), FILTER))]
-  }
 
   return(maf.annotated)
 
