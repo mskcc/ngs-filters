@@ -75,4 +75,4 @@ annotateCmd = 'cat %s | vcf-annotate --annotations %s --columns CHROM,POS,REF,AL
 subprocess.call(annotateCmd, shell = True)
 
 ### Remove temporary folder
-subprocess.call('rm -rf'+outPath, shell = True)
+subprocess.call('rm -rf '+outPath, shell = True)
