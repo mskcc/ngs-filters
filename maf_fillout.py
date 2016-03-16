@@ -70,4 +70,4 @@ gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf ___t
 subprocess.call(gbcmCall, shell = True)
 
 ### Remove temporary MAF
-# subprocess.call('rm -f ___tmp.maf', shell = True)
+subprocess.call('rm -f ___tmp.maf', shell = True)

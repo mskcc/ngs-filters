@@ -16,7 +16,8 @@ add_mut_tri <- function(maf) {
         }
     }
 
-  if (!'t_var_freq' %in% names(maf)) maf[, t_var_freq := t_alt_count/(t_alt_count+t_ref_count)]
+  if (!'t_var_freq' %in% names(maf)) maf[!t_ref_count %in% c(NA,'.') & !t_alt_count %in% c(NA,'.'),
+  t_var_freq := as.numeric(t_alt_count)/(as.numeric(t_alt_count)+as.numeric(t_ref_count))]
 
   maf[, c('TriNuc_CT', 'Tumor_Seq_Allele2_CT', 'Mut_Tri') := 'X']
   maf[Variant_Type == "SNP" & !is.na(Reference_Allele) & !is.na(t_var_freq) & !is.na(TriNuc),
