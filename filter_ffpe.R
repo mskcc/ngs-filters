@@ -5,12 +5,14 @@
 # Identify samples with FFPE artifacts or filter the artifacts from a maf file.
 ##########################################################################################
 
+revc <- function(x) rev(chartr('ACGT', 'TGCA', x))
+
 # Annotate maf with Stratton Plot bin
 add_mut_tri <- function(maf) {
 
-  if ("Ref_Tri" %in% names(maf)) {
-    if (!"TriNuc" %in% names(maf)) {
-      maf[, Ref_Tri := TriNuc]
+  if ("TriNuc" %in% names(maf)) {
+    if (!"Ref_Tri" %in% names(maf)) {
+      maf[, TriNuc := Ref_Tri]
     } else {
       stop("must have either Ref_Tri or TriNuc column")
     }
@@ -21,15 +23,24 @@ add_mut_tri <- function(maf) {
     maf[!t_ref_count %in% c(NA,'.') & !t_alt_count %in% c(NA,'.'),
   t_var_freq := as.numeric(t_alt_count)/(as.numeric(t_alt_count)+as.numeric(t_ref_count))]
 
-  ### reverse complement if ref is either G or A
-  maf[Variant_Type == "SNP" & str_sub(Ref_Tri, 2, 2) %in% c('G', 'A'),
-      Ref_Tri := rev(chartr('ACGT', 'TGCA', Ref_Tri))]
-
-  ### set Mut_Tri: for example, a C>A mutation with the context ACA > AAA becomes ACAA
+  ### reverse complement Ref_Tri if ref is either G or A
   maf[Variant_Type == "SNP",
-      Mut_Tri := paste0(substr(Ref_Tri, 1, 2),
-                        Tumor_Seq_Allele2,
-                        substr(Ref_Tri, 3, 3))]
+      Mut_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
+                        revc(Ref_Tri),
+                        Ref_Tri)]
+  ### reverse complement Tumor_Seq_Allele2 if ref is either G or A
+  Tumor_Seq_Allele2_CT <- ifelse(Reference_Allele %in% c('G', 'A'),
+                                 revc(Tumor_Seq_Allele2),
+                                 Tumor_Seq_Allele2)
+
+  ### combine Ref_Tri and Tumor_Seq_Allele2
+  ### (with conditional reverse compliment)
+  maf[Variant_Type == "SNP",
+      Mut_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
+                        paste0(substr(Ref_Tri, 1, 2),
+                               Tumor_Seq_Allele2_CT,
+                               substr(Ref_Tri, 3, 3)),
+                        Ref_Tri)]
 
   maf
 }
