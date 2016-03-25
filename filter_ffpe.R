@@ -29,9 +29,9 @@ add_mut_tri <- function(maf) {
                         revc(Ref_Tri),
                         Ref_Tri)]
   ### reverse complement Tumor_Seq_Allele2 if ref is either G or A
-  Tumor_Seq_Allele2_CT <- ifelse(Reference_Allele %in% c('G', 'A'),
-                                 revc(Tumor_Seq_Allele2),
-                                 Tumor_Seq_Allele2)
+  Tumor_Seq_Allele2_CT <- maf[, ifelse(Reference_Allele %in% c('G', 'A'),
+                                       revc(Tumor_Seq_Allele2),
+                                       Tumor_Seq_Allele2)]
 
   ### combine Ref_Tri and Tumor_Seq_Allele2
   ### (with conditional reverse compliment)
