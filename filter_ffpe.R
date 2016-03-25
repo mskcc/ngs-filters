@@ -8,8 +8,8 @@
 # Annotate maf with Stratton Plot bin
 add_mut_tri <- function(maf) {
 
-  if ("Ref_Tri" %in% names(maf)) {
-    if (!"TriNuc" %in% names(maf)) {
+  if (!"Ref_Tri" %in% names(maf)) {
+    if ("TriNuc" %in% names(maf)) {
       maf[, Ref_Tri := TriNuc]
     } else {
       stop("must have either Ref_Tri or TriNuc column")
