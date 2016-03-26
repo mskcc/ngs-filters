@@ -1,4 +1,4 @@
-# Modular filters for flagging of putatative false-positive mutation calls in whole-exome sequencing
+# Modular filters for flagging of putative false-positive mutation calls in whole-exome sequencing
 ![Alt Text](http://i.giphy.com/14bJDgZJb8SI4E.gif)
 
 ## Use
