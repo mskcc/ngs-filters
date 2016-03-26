@@ -5,35 +5,43 @@
 # Identify samples with FFPE artifacts or filter the artifacts from a maf file.
 ##########################################################################################
 
+revc <- function(x) rev(chartr('ACGT', 'TGCA', x))
+
 # Annotate maf with Stratton Plot bin
 add_mut_tri <- function(maf) {
 
-    if (!"TriNuc" %in% names(maf)) {
-        if ("Ref_Tri" %in% names(maf)) {
-            maf[, TriNuc := Ref_Tri]
-        } else {
-        stop("must have either Ref_Tri or TriNuc column")
-        }
+  if (!"Ref_Tri" %in% names(maf)) {
+    if ("TriNuc" %in% names(maf)) {
+      maf[, Ref_Tri := TriNuc]
+    } else {
+      stop("must have either Ref_Tri or TriNuc column")
     }
+  }
 
-  if (!'t_var_freq' %in% names(maf)) maf[!t_ref_count %in% c(NA,'.') & !t_alt_count %in% c(NA,'.'),
+  ### check for t_var_freq
+  if (!'t_var_freq' %in% names(maf))
+    maf[!t_ref_count %in% c(NA,'.') & !t_alt_count %in% c(NA,'.'),
   t_var_freq := as.numeric(t_alt_count)/(as.numeric(t_alt_count)+as.numeric(t_ref_count))]
 
-  maf[, c('TriNuc_CT', 'Tumor_Seq_Allele2_CT', 'Mut_Tri') := 'X']
-  maf[Variant_Type == "SNP" & !is.na(Reference_Allele) & !is.na(t_var_freq) & !is.na(TriNuc),
-      TriNuc_CT := ifelse(Reference_Allele %in% c("G", "A"),
-                          as.character(Biostrings::reverseComplement(Biostrings::DNAStringSet(TriNuc))),
-                          TriNuc)]
-
-  maf[Variant_Type == "SNP" & !is.na(Reference_Allele) & !is.na(t_var_freq) & !is.na(Tumor_Seq_Allele2),
-      Tumor_Seq_Allele2_CT := ifelse(Reference_Allele %in% c("G", "A"),
-                                     as.character(Biostrings::reverseComplement(Biostrings::DNAStringSet(Tumor_Seq_Allele2))),
+  ### reverse complement Ref_Tri if ref is either G or A
+  maf[Variant_Type == "SNP",
+      Mut_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
+                        revc(Ref_Tri),
+                        Ref_Tri)]
+  ### reverse complement Tumor_Seq_Allele2 if ref is either G or A
+  Tumor_Seq_Allele2_CT <- maf[Variant_Type == "SNP",
+                              ifelse(Reference_Allele %in% c('G', 'A'),
+                                     revc(Tumor_Seq_Allele2),
                                      Tumor_Seq_Allele2)]
 
-  maf[Variant_Type == "SNP" & !is.na(TriNuc_CT) & !is.na(Tumor_Seq_Allele2_CT),
-      Mut_Tri := paste0(substr(TriNuc_CT, 1, 2),
-                        Tumor_Seq_Allele2_CT,
-                        substr(TriNuc_CT, 3, 3))]
+  ### combine Ref_Tri and Tumor_Seq_Allele2
+  ### (with conditional reverse compliment)
+  maf[Variant_Type == "SNP",
+      Mut_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
+                        paste0(substr(Ref_Tri, 1, 2),
+                               Tumor_Seq_Allele2_CT,
+                               substr(Ref_Tri, 3, 3)),
+                        Ref_Tri)]
 
   maf
 }
