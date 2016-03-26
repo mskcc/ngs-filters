@@ -7,9 +7,9 @@ These scripts are intended to be used to add annotation to a MAF whether a given
 ## Filters
 1. Common variants
 A variant is considered common if its minor allele frequency in [ExAC](http://exac.broadinstitute.org/) exceeds 0.0004. This filter needs an `ExAC_AF` column which easiest is can be added to a MAF by running [maf2maf](https://github.com/mskcc/vcf2maf), which now also annotates the `FILTER` column. This hopefully will render this filter script obsolete. With the `-f` flag this filter will annotate a maf with information from another MAF.
-```bash
-./filter_common_variants.R -m input.maf -o output.maf
-```
+
+    ./filter_common_variants.R -m input.maf -o output.maf
+
 
 2. Low-confidence calls
 A variant is considered a low-confidence call if it fulfills `n_alt_count > 1 | t_depth < 20 | t_alt_count <= 3`. Interpretation and use of this filter depends on the nature of the sequencing experiment.
@@ -39,8 +39,7 @@ Flags a variant if it is supported by 3 reads or more in a fillout against an FF
 Flags a variant if it looks like an FFPE artifact, i.e. occurs at low VAF and is a C>T substitution. This script also can help identifying samples suffering from FFPE artifacts by using the `-i` flag.
 ```bash
 ./filter_ffpe.R -m input.maf -o output.maf -i
-```
-```bash
+ ### or
 ./filter_ffpe.R -m input.maf -o output.maf
 ```
 
