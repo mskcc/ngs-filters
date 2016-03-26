@@ -49,6 +49,7 @@ Filter variants located in regions of to which sequencing reads are hard to map,
 ./filter_blacklist_regions.R -m input.maf -o output.maf
 ```
 
+***
 ## Fillout wrapper
 This script wraps `GetBaseCountsMultiSample` on luna and can be used to generate fillout files (i.e. allele counts for variants in input MAF) across a set of BAM files. The `-n` flag can be used to run multithreaded. The genome of the MAF and the BAMs needs to be consistent and specified with the `-g` flag, which knows where the assemblies for GRCh37, hg19, b37, and b37_dmp are located on luna. The script `convert-maf-to-hg19.sh` can be used to fake an hg19 MAF.
 ```bash
