@@ -2,7 +2,7 @@
 
 ##########################################################################################
 # MSKCC CMO
-# Annotate common_variants identified by maf2maf
+# Annotate low-confidence mutation calls
 ##########################################################################################
 
 annotate_maf <- function(maf) {
