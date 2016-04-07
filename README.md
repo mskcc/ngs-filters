@@ -1,5 +1,4 @@
 # Modular filters for flagging of putative false-positive mutation calls in whole-exome sequencing
-![Alt Text](http://i.giphy.com/14bJDgZJb8SI4E.gif)
 
 ## Use
 These scripts are intended to be used to add annotation to a MAF whether a given variant is a possible false positive. All take `stdin` and can write to `stdout` and are standalone with two exceptions, for which a fillout operation needs to be run. Filter flags are added to the `FILTER` column, in a comma-separated manner. This filters almost exclusively operate on SNVs. Additionally, this repo contains a wrapper for running a [VCF-based false-positive filter](https://github.com/ckandoth/variant-filter) which populates the FILTER field of a VCF file, which can be retained if conversion to MAF is carried out with [vcf2maf](https://github.com/mskcc/vcf2maf).
