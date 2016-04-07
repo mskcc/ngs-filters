@@ -25,7 +25,7 @@ Flags a variant if it is supported by 3 reads or more in any of the normals sequ
 * Presence in pool of normals
 Similarily to the previous filter, a variant is flagged by this filter if it is supported by 3 reads or more in at least 3 samples in a pool of normals. See instructions below for how to generate a fillout file.
 ```bash
-./filter_norma_panel.R -m input.maf -o output.maf -f pon.fillout
+./filter_normal_panel.R -m input.maf -o output.maf -f pon.fillout
 ```
 
 * Presence in FFPE pool
