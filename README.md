@@ -37,9 +37,9 @@ Flags a variant if it is supported by 3 reads or more in a fillout against an FF
 * FFPE artifact
 Flags a variant if it looks like an FFPE artifact, i.e. occurs at low VAF and is a C>T substitution. This script also can help identifying samples suffering from FFPE artifacts by using the `-i` flag.
 ```bash
-./filter_ffpe.R -m input.maf -o output.maf -i
- ### or
 ./filter_ffpe.R -m input.maf -o output.maf
+ ### or
+./filter_ffpe.R -m input.maf -i
 ```
 
 * Low-mappability ("blacklisted") regions
