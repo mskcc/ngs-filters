@@ -3,6 +3,29 @@
 ## Use
 These scripts are intended to be used to add annotation to a MAF whether a given variant is a possible false positive. All take `stdin` and can write to `stdout` and are standalone with two exceptions, for which a fillout operation needs to be run. Filter flags are added to the `FILTER` column, in a comma-separated manner. This filters almost exclusively operate on SNVs. Additionally, this repo contains a wrapper for running a [VCF-based false-positive filter](https://github.com/ckandoth/variant-filter) which populates the FILTER field of a VCF file, which can be retained if conversion to MAF is carried out with [vcf2maf](https://github.com/mskcc/vcf2maf).
 
+## filterWrapper.sh
+
+This script is a wrapper which will run any of the R based filters in this repository. The output MAF is annotated with headers to indicate which filter was used and which version of the repository.
+
+Usage:
+```bash
+	filterWrapper.sh FILTER_NAME INPUT_MAF OUTPUT_MAF [Additional Parameters]
+```
+
+example:
+
+```bash
+	filterWrapper.sh filter_blacklist_regions.R \
+		Proj_1234_CMO_MAF.txt filteredMAF.txt
+```
+
+The first lines of the output MAF will look as follows:
+
+```
+#version 2.4
+#wes-filters/filterWrapper.sh VERSION=v1.0.1-2-g4d3694b FILTER=filter_blacklist_regions.R
+```
+
 ## Filters
 * Common variants
 A variant is considered common if its minor allele frequency in [ExAC](http://exac.broadinstitute.org/) exceeds 0.0004. This filter needs an `ExAC_AF` column which easiest is can be added to a MAF by running [maf2maf](https://github.com/mskcc/vcf2maf), which now also annotates the `FILTER` column. This hopefully will render this filter script obsolete. With the `-f` flag this filter will annotate a maf with information from another MAF.
