@@ -5,7 +5,7 @@ SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --always --long)
 VTAG="$(basename $SDIR)/$(basename $0) VERSION=$SVERSION"
 
 usage() {
-    echo "filterWrapper.sh FILTER_SCRIPT IN_MAF OUT_MAF [Additional parameters for Filter]"
+    echo "applyFilter.sh FILTER_SCRIPT IN_MAF OUT_MAF [Additional parameters for Filter]"
     echo
     echo "    Run the filter (FILTER_SCRIPT) on the input maf and"
     echo "    write a properly headered output maf"
