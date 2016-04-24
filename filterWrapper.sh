@@ -2,6 +2,7 @@
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --always --long)
+VTAG="$(basename $SDIR)/$(basename $0) VERSION=$SVERSION"
 
 usage() {
     echo "filterWrapper.sh FILTER_SCRIPT IN_MAF OUT_MAF [Additional parameters for Filter]"
@@ -12,8 +13,8 @@ usage() {
     echo "    If the filter script require more parameters they"
     echo "    can be passed after the output maf name"
     echo ""
-    echo $SVERSION
-    echo $SDIR
+    echo "  "$VTAG
+    echo
     exit
 }
 
@@ -25,3 +26,31 @@ FILTER=$1
 MAFIN=$2
 MAFOUT=$3
 
+shift 3
+
+# Resolve filter to full path
+FILTER=$SDIR/$(basename $FILTER)
+if [ ! -e $FILTER ]; then
+    echo "ERROR: Non-existant filter" $(basename $FILTER)
+    exit 1
+fi
+
+#
+# Check if MAF has proper version header
+# If not add it.
+#
+
+HEADER=$(head -1 $MAFIN)
+if [[ ! "$HEADER" =~ /^#/ ]]; then
+    echo "#version 2.4" > $MAFOUT
+fi
+
+# Add version tag
+
+echo "#$VTAG FILTER=$(basename $FILTER)" >>$MAFOUT
+
+TMPMAF=$(uuidgen).maf
+
+$FILTER -m $MAFIN -o $TMPMAF $*
+cat $TMPMAF >>$MAFOUT
+rm $TMPMAF
