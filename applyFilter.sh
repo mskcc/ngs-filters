@@ -41,8 +41,10 @@ fi
 #
 
 HEADER=$(head -1 $MAFIN)
-if [[ ! "$HEADER" =~ /^#/ ]]; then
+if [[ ! "$HEADER" =~ ^# ]]; then
     echo "#version 2.4" > $MAFOUT
+else
+    egrep "^#" $MAFIN > $MAFOUT
 fi
 
 # Add version tag
