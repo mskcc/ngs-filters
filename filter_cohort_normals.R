@@ -22,7 +22,7 @@ annotate_maf <- function(maf, fillout,
 
   # Add TAG to MAF
   if (!('TAG' %in% names(maf))) {
-    maf[, TAG := stringr::str_c('chr', Chromosome,
+    maf[, TAG := stringr::str_c(Chromosome,
                                 ':', Start_Position,
                                 '-', End_Position,
                                 ':', Reference_Allele,
@@ -30,7 +30,7 @@ annotate_maf <- function(maf, fillout,
   }
 
   # index
-  fillout[, TAG := stringr::str_c('chr', Chromosome,
+  fillout[, TAG := stringr::str_c(Chromosome,
                                   ':', Start_Position,
                                   '-', End_Position,
                                   ':', Reference_Allele,
