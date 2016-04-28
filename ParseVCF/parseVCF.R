@@ -2,15 +2,11 @@ parse_vcf <- function(vcf){
 
     format = strsplit(vcf$FORMAT[1],":")[[1]]
 
-    maf = melt(vcf,id.vars = colnames(fillout)[1:9], variable.name = 'Tumor_Sample_Barcode')
 
-    # Normalize chromosome names to NCBI convention
+    # Unroll VCF samples columns into MAF rows and fix #CHROM column name
 
-    if(str_sub(maf$`#CHROM`[1],1,1)=="c") {
-        maf=mutate(maf,CHROM=str_sub(`#CHROM`,4,-1))
-    } else {
-        maf=mutate(maf,CHROM=`#CHROM`)
-    }
+    maf = melt(vcf, id.vars = colnames(fillout)[1:9], variable.name = 'Tumor_Sample_Barcode') %>%
+        mutate(CHROM=`#CHROM`)
 
     # convert events to MAF format convention
     #   INS X XN ==> - N
@@ -40,15 +36,21 @@ parse_vcf <- function(vcf){
         # Parse format column of VCF
 
         separate(value, into = format, sep = ':') %>%
+
+        # New format for index TAG. Although we are in MAF coordinates
+        # only use start point (POS). Too lazy to compute end point
+        # and it is not needed
+
         mutate(TAG = str_c(CHROM, ':', POS, ':', REF, ':', ALT))
 
     # TODO
     # Bug in current fillout code when given a MAF for input
     # which causes lines to be duplicated if the same event
     # appears multiple times. This should be fixed in fillout
+    # However STAG might be usefull
 
-    maf = mutate(maf, tmp_id = str_c(Tumor_Sample_Barcode, TAG))
-    maf = maf[!duplicated(maf$tmp_id),]
+    maf = mutate(maf, STAG = str_c(TAG,":",Tumor_Sample_Barcode))
+    maf = maf[!duplicated(maf$STAG),]
 
 }
 
