@@ -71,6 +71,6 @@ if( ! interactive() ) {
     } else { stop('Needs ExAC_AF in either input MAF or supplementary flagged MAF.') }
 
     outfile <- args$outfile
-    if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
-    } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
+    if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F, na="")
+    } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F, na="") }
 }

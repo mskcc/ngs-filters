@@ -65,6 +65,6 @@ if (!interactive()) {
   rmsk[, Chromosome := gsub("chr", "", Chromosome)]
 
   maf.out <- annotate_maf(maf, blacklist, rmsk)
-  if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
-  } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
+  if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F, na="")
+  } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F, na="") }
 }
