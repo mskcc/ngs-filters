@@ -8,17 +8,22 @@
 
 annotate_maf <- function(maf, fillout,
                          alt.reads = 3,
-                         normal.regex = NA) {
+                         normal.regex = '') {
 
   # select normal samples
-  if (!is.na(normal.regex)) {
-    fillout <- fillout[Tumor_Sample_Barcode %like% normal]
+  if (normal.regex!="") {
+    cat("using user supplied regex",normal.regex,"\n")
+    fillout <- fillout[Tumor_Sample_Barcode %like% normal.regex]
   } else {
     fillout <- fillout[Tumor_Sample_Barcode %like% "*N$"]
   }
 
   # identify loci with 3+ alternate reads in any normal sample
   fillout <- fillout[t_alt_count >= alt.reads]
+
+  if(nrow(fillout)==0){
+    cat("**WARNING** cohort normal fillout empty. Check normal.regex=r/",normal.regex,"/\n")
+  }
 
   # Add TAG to MAF
   if (!('TAG' %in% names(maf))) {
@@ -48,7 +53,6 @@ annotate_maf <- function(maf, fillout,
 }
 
 if( ! interactive() ) {
-
   pkgs = c('data.table', 'argparse')
   junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
@@ -58,6 +62,7 @@ if( ! interactive() ) {
   parser$add_argument('-f', '--fillout', type='character', help='FILLOUT.vep.maf file')
   parser$add_argument('-n', '--reads', type='character', default=3, help='Alternate read threshold')
   parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
+  parser$add_argument('-r', '--regex', type='character', help='RegEx for normals', default = '')
   args=parser$parse_args()
 
   if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
@@ -65,8 +70,9 @@ if( ! interactive() ) {
   fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
   alt.reads <- args$reads
   outfile <- args$outfile
+  normal.regex <- args$regex
 
-  maf.out <- annotate_maf(maf, fillout)
+  maf.out <- annotate_maf(maf, fillout, normal.regex=normal.regex)
   if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
   } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
 }
