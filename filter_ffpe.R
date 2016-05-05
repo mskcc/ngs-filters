@@ -5,14 +5,15 @@
 # Identify samples with FFPE artifacts or filter the artifacts from a maf file.
 ##########################################################################################
 
-revc <- function(x) rev(chartr('ACGT', 'TGCA', x))
+strReverse <- function(x) sapply(lapply(strsplit(x, NULL), rev), paste, collapse="")
+revc <- function(x) strReverse(chartr('ACGT', 'TGCA', x))
 
 # Annotate maf with Stratton Plot bin
 add_mut_tri <- function(maf) {
 
   if (!"Ref_Tri" %in% names(maf)) {
     if ("TriNuc" %in% names(maf)) {
-      maf[, Ref_Tri := TriNuc]
+      maf[Variant_Type == "SNP", Ref_Tri := TriNuc]
     } else {
       stop("must have either Ref_Tri or TriNuc column")
     }
@@ -37,11 +38,9 @@ add_mut_tri <- function(maf) {
   ### combine Ref_Tri and Tumor_Seq_Allele2
   ### (with conditional reverse compliment)
   maf[Variant_Type == "SNP",
-      Mut_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
-                        paste0(substr(Ref_Tri, 1, 2),
-                               Tumor_Seq_Allele2_CT,
-                               substr(Ref_Tri, 3, 3)),
-                        Ref_Tri)]
+      Mut_Tri := paste0(substr(Ref_Tri, 1, 2),
+                        Tumor_Seq_Allele2_CT,
+                        substr(Ref_Tri, 3, 3))]
 
   maf
 }
