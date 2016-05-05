@@ -11,12 +11,8 @@ revc <- function(x) strReverse(chartr('ACGT', 'TGCA', x))
 # Annotate maf with Stratton Plot bin
 add_mut_tri <- function(maf) {
 
-  if (!"Ref_Tri" %in% names(maf)) {
-    if ("TriNuc" %in% names(maf)) {
-      maf[Variant_Type == "SNP", Ref_Tri := TriNuc]
-    } else {
-      stop("must have either Ref_Tri or TriNuc column")
-    }
+  if (!"TriNuc" %in% names(maf)) {
+    stop("must have TriNuc column")
   }
 
   ### check for t_var_freq
