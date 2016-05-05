@@ -17,7 +17,7 @@ annotate_maf <- function(maf) {
     }
 
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
-    maf.annotated <- maf[, low_confidence := (n_alt_count > 1 | t_depth < 20 | t_alt_count <= 3)]
+    maf.annotated <- maf[, low_confidence := (ifelse(n_alt_count =='.', FALSE, as.numeric(n_alt_count) > 1) | as.numeric(t_depth) < 20 | as.numeric(t_alt_count) <= 3)]
     maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & low_confidence == TRUE, 'low_confidence',
                                             ifelse(FILTER != '.' & low_confidence == TRUE,
                                                    paste0(FILTER, ',low_confidence'), FILTER))]
