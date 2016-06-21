@@ -5,7 +5,7 @@ parse_vcf <- function(vcf){
 
     # Unroll VCF samples columns into MAF rows and fix #CHROM column name
 
-    maf = melt(vcf, id.vars = colnames(fillout)[1:9], variable.name = 'Tumor_Sample_Barcode') %>%
+    maf = melt(vcf, id.vars = colnames(vcf)[1:9], variable.name = 'Tumor_Sample_Barcode') %>%
         mutate(CHROM=`#CHROM`)
 
     # convert events to MAF format convention
