@@ -15,15 +15,15 @@ if( ! interactive() ) {
   rm(junk)
 
   parser=ArgumentParser()
-  parser$add_argument('-f', '--fillout', type='character', help='GetBaseCountsMultiSample output')
+  parser$add_argument('-v', '--vcf', type='character', help='VCF File')
   parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
   args=parser$parse_args()
 
-  fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
+  vcf <- suppressWarnings(fread(args$vcf, showProgress = F))
   outfile <- args$outfile
 
-  fillMaf = parse_vcf(fillout)
-  maf.out = fillMaf
+  maf = parse_vcf(vcf)
+  maf.out = maf
 
   if (outfile == 'stdout') {
     write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F, na="")
