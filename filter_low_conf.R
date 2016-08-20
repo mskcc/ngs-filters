@@ -1,4 +1,4 @@
-#!/usr/bin/env Rscript
+#!/opt/common/CentOS_6-dev/R/R-3.1.3/lib64/R/bin/Rscript
 
 ##########################################################################################
 # MSKCC CMO
