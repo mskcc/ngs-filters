@@ -25,10 +25,7 @@ add_mut_tri <- function(maf) {
       Ref_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
                         revc(TriNuc),
                         TriNuc)]
-<<<<<<< HEAD
 
-=======
->>>>>>> master
   ### reverse complement Tumor_Seq_Allele2 if ref is either G or A
   Tumor_Seq_Allele2_CT <- maf[Variant_Type == "SNP",
                               ifelse(Reference_Allele %in% c('G', 'A'),
