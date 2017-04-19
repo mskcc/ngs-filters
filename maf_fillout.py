@@ -9,6 +9,7 @@ import argparse
 import subprocess
 import os
 import string
+import uuid
 
 parser = argparse.ArgumentParser(description = descr, formatter_class = argparse.RawTextHelpFormatter)
 parser.add_argument('-m', '--maf', help = 'MAF file on which to filllout', required = True)
@@ -61,13 +62,14 @@ for bam in bams:
 		print 'Genome in '+bam+' does not agree with input genome'
 
 ### Make a temporary simplified MAF
+tmpMaf = uuid.uuid4().hex+'_tmp.maf'
 uniqRscript = os.path.dirname(os.path.realpath(__file__))+'/maf_uniq_tags.R'
-uniqRCall = uniqRscript+' '+maf+' > ___tmp.maf'
+uniqRCall = uniqRscript+' '+maf+' > '+tmpMaf
 subprocess.call(uniqRCall, shell = True)
 
 ### Call GetBaseCountsMultiSample
-gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf ___tmp.maf --output %s %s' % (n, genomePath, output, bamString)
+gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (n, genomePath, tmpMaf, output, bamString)
 subprocess.call(gbcmCall, shell = True)
 
 ### Remove temporary MAF
-subprocess.call('rm -f ___tmp.maf', shell = True)
+subprocess.call('rm -f '+tmpMaf, shell = True)
