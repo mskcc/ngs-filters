@@ -17,7 +17,7 @@ import string
 parser = argparse.ArgumentParser(description = descr, formatter_class = argparse.RawTextHelpFormatter)
 parser.add_argument('-v', '--vcf', help = 'VCF file with SNVs', required = True)
 parser.add_argument('-b', '--bam', help = 'Tumor sample BAM file', required = True)
-parser.add_argument('-g', '--genome', help = 'Reference assembly of BAM files, e.g. hg19/grch37/b37', required = True)
+parser.add_argument('-g', '--genome', help = 'Reference assembly of BAM files, e.g. hg19/grch37/b37', required = True, choices=cmo.util.genomes.keys())
 parser.add_argument('-f', '--fppath', help = 'Full path to fpfilter.pl', required = False)
 args = parser.parse_args()
 
@@ -31,14 +31,7 @@ if args.fppath is None:
 else:
 	fpfilter = args.fppath
 
-if genome == 'hg19':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/hg19/hg19.fasta'
-if genome == 'grch37':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/GRCh37/gr37.fasta'
-if genome == 'b37':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/b37/b37.fasta'
-if genome == 'b37_dmp':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/b37_dmp/b37.fasta'
+genomePath = cmo.util.genomes[args.genome]['fasta']
 
 outPath = prefix+'_fpfilter'
 if not os.path.exists(outPath):
