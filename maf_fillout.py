@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 ##########################################################################################
 # MSKCC CMO
 descr = 'Perform fillout operation on MAF file using GetBaseCountsMultiSample'
@@ -10,11 +9,12 @@ import subprocess
 import os
 import string
 import uuid
+import cmo
 
 parser = argparse.ArgumentParser(description = descr, formatter_class = argparse.RawTextHelpFormatter)
 parser.add_argument('-m', '--maf', help = 'MAF file on which to filllout', required = True)
 parser.add_argument('-b', '--bams', help = 'BAM files to fillout with', required = True, nargs='+')
-parser.add_argument('-g', '--genome', help = 'Reference assembly of BAM files, e.g. hg19/grch37/b37', required = True)
+parser.add_argument('-g', '--genome', help = 'Reference assembly of BAM files, e.g. hg19/grch37/b37', required = True, choices = cmo.util.genomes.keys())
 parser.add_argument('-o', '--output', help = 'Prefix for output file', required = False)
 parser.add_argument('-n', '--n_threads', help = 'Multithread', default = 10, required = False)
 args = parser.parse_args()
@@ -29,17 +29,11 @@ else:
 	output = args.output
 
 ### Path to GetBaseCountsMultiSample
+#should be cmo.utils.programs['GetBaseCountsMultiSample]['1.0.0'], but zeng hasn't packaged this for release yet
 gbcmPath = '/home/socci/Code/Zeng/GetBaseCountsMultiSample/GetBaseCountsMultiSample'
 
 ### Set genome path
-if genome == 'hg19':
-	genomePath = '/common/data/assemblies/H.sapiens/hg19/hg19.fasta'
-if genome == 'grch37':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/GRCh37/gr37.fasta'
-if genome == 'b37':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/b37/b37.fasta'
-if genome == 'b37_dmp':
-	genomePath = '/ifs/depot/assemblies/H.sapiens/b37_dmp/b37.fasta'
+genomePath = cmo.utils.genomes[args.genome]['fasta']
 
 ### Parse BAM files into string
 bamString = []
@@ -51,7 +45,7 @@ bamString = string.join(bamString)
 mafGenome = subprocess.check_output('grep -v ^# '+maf+' | tail -1 | cut -f4', shell = True)
 print 'Using '+genome
 print 'MAF genome seems to be '+mafGenome.strip().lower()
-if mafGenome.strip().lower() is not genome:
+if mafGenome.strip().lower() is not genome.lower():
 	print 'Genome build different from that in MAF file, might fail'
 
 ### Check if genome in BAM header 
