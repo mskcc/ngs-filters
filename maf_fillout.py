@@ -29,11 +29,11 @@ else:
 	output = args.output
 
 ### Path to GetBaseCountsMultiSample
-#should be cmo.utils.programs['GetBaseCountsMultiSample]['1.0.0'], but zeng hasn't packaged this for release yet
+#should be cmo.util.programs['GetBaseCountsMultiSample]['1.0.0'], but zeng hasn't packaged this for release yet
 gbcmPath = '/home/socci/Code/Zeng/GetBaseCountsMultiSample/GetBaseCountsMultiSample'
 
 ### Set genome path
-genomePath = cmo.utils.genomes[args.genome]['fasta']
+genomePath = cmo.util.genomes[args.genome]['fasta']
 
 ### Parse BAM files into string
 bamString = []
