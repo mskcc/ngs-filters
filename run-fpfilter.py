@@ -13,6 +13,7 @@ import argparse
 import subprocess
 import os
 import string
+import cmo
 
 parser = argparse.ArgumentParser(description = descr, formatter_class = argparse.RawTextHelpFormatter)
 parser.add_argument('-v', '--vcf', help = 'VCF file with SNVs', required = True)
