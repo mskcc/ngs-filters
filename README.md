@@ -71,6 +71,18 @@ Filter variants located in regions of to which sequencing reads are hard to map,
 ./filter_blacklist_regions.R -m input.maf -o output.maf
 ```
 
+* Hotspots ("whitelisted") sites
+Tag variants located in sites define as hotspots by [hotspot-whitelist](https://github.com/mskcc/hotspot-whitelist)
+```python
+./tag_hotspots.py -m input.maf -itxt hotspot-list-union-v1-v2.txt -o output.maf
+```
+
+* Add DMP Filter Tag
+Flags a variant if it dose not pass allele count threshold set at DMP i.e for hotspot:AD>=8;DP>=20;VF=>0.02 & for non-hotspots D>=10;DP>=20;VF=>0.05 occurs at low VAF and is a C>T substitution. This script also can help identifying samples suffering from FFPE artifacts by using the `-i` flag.
+```bash
+./filter_dmp.R -m input.maf -o output.maf
+```
+
 ***
 ## Fillout wrapper
 This script wraps `GetBaseCountsMultiSample` on luna and can be used to generate fillout files (i.e. allele counts for variants in input MAF) across a set of BAM files. The `-n` flag can be used to run multithreaded. The genome of the MAF and the BAMs needs to be consistent and specified with the `-g` flag, which knows where the assemblies for GRCh37, hg19, b37, and b37_dmp are located on luna. The script `convert-maf-to-hg19.sh` can be used to fake an hg19 MAF.
