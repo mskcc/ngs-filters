@@ -81,6 +81,7 @@ Tag variants located in sites define as hotspots by [hotspot-whitelist](https://
 Flags a variant if it dose not pass allele count threshold set at DMP i.e for hotspot:AD>=8;DP>=20;VF=>0.02 & for non-hotspots D>=10;DP>=20;VF=>0.05 occurs at low VAF and is a C>T substitution. This script also can help identifying samples suffering from FFPE artifacts by using the `-i` flag.
 ```bash
 ./filter_dmp.R -m input.maf -o output.maf
+```
 
 ***
 ## Fillout wrapper
