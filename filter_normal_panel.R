@@ -83,10 +83,13 @@ if( ! interactive() ) {
 					  ':', Reference_Allele,
 					  ':', Tumor_Seq_Allele2)]
 	  fillout = fillout[!duplicated(fillout$TAG),]
+	  # Calculate frequencies and return
+	  group_by(fillout, TAG) %>%
+			  summarize(normal_count = sum(n_alt_count>=3))
 	  parsed_fillout = fillout
   }
 
-  maf.out <- annotate_maf(maf, parsed_fillout,normal.count)
+  maf.out <- annotate_maf(maf, parsed_fillout, normal.count)
   if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
   } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
 }

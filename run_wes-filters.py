@@ -160,6 +160,8 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
+    if(args.verbose):
+        logger.info("run_wes-filters: Running, rm -rf %s",tmpdir)
     #subprocess.call("rm -rf " + tmpdir, shell = True)
     return(outfile)
 
