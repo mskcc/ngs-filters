@@ -52,6 +52,7 @@ parse_fillout <- function(fillout) {
   group_by(fillout, TAG) %>%
     summarize(normal_count = sum(n_alt_count>=3))
 }
+
 parse_fillout_maf <- function(fillout) {
 	# index
 	fillout[, TAG := stringr::str_c('chr', Chromosome,
@@ -62,7 +63,7 @@ parse_fillout_maf <- function(fillout) {
 	fillout = fillout[!duplicated(fillout$TAG),]
 	# Calculate frequencies and return
 	group_by(fillout, TAG) %>%
-			summarize(normal_count = sum(n_alt_count>=3))
+			summarize(normal_count = sum(t_alt_count>=3))
 }
 
 if( ! interactive() ) {
