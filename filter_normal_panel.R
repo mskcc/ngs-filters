@@ -83,10 +83,11 @@ if( ! interactive() ) {
 					  ':', Reference_Allele,
 					  ':', Tumor_Seq_Allele2)]
 	  fillout = fillout[!duplicated(fillout$TAG),]
-	  # Calculate frequencies and return
-	  group_by(fillout, TAG) %>%
-			  summarize(normal_count = sum(n_alt_count>=3))
 	  parsed_fillout = fillout
+	  # Calculate frequencies and return
+	  group_by(parsed_fillout, TAG) %>%
+			  summarize(normal_count = sum(n_alt_count>=3))
+	  
   }
 
   maf.out <- annotate_maf(maf, parsed_fillout, normal.count)
