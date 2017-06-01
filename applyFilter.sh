@@ -53,6 +53,6 @@ echo "#$VTAG FILTER=$(basename $FILTER)" >>$MAFOUT
 
 TMPMAF=$(uuidgen).maf
 
-$FILTER -m $MAFIN -o $TMPMAF $*
+Rscript --vanilla $FILTER -m $MAFIN -o $TMPMAF $*
 cat $TMPMAF >>$MAFOUT
 rm $TMPMAF
