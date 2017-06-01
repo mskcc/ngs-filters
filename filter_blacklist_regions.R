@@ -41,7 +41,7 @@ if (!interactive()) {
   rm(junk)
 
   args = commandArgs(trailingOnly = FALSE)
-  path = dirname(sys.frame(1)$ofile)
+  path = basename(this.file())
   #path = dirname(stringr::str_replace((args[4]), '--file=', ''))
 
   parser=ArgumentParser()
