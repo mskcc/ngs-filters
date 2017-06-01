@@ -60,7 +60,8 @@ parse_fillout_maf <- function(fillout) {
 					'-', End_Position,
 					':', Reference_Allele,
 					':', Tumor_Seq_Allele2)]
-	fillout = fillout[!duplicated(fillout$TAG),]
+	fillout = mutate(fillout, tmp_id = str_c(Tumor_Sample_Barcode, Chromosome, Start_Position, End_Position, Reference_Allele, Tumor_Seq_Allele2, Hugo_Symbol))
+	fillout = fillout[!duplicated(fillout$tmp_id),]
 	# Calculate frequencies and return
 	group_by(fillout, TAG) %>%
 			summarize(normal_count = sum(t_alt_count>=3))
