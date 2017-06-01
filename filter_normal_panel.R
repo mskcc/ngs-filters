@@ -10,7 +10,7 @@ annotate_maf <- function(maf, fillout,
 		normal.count=3) {
 	
 	# identify loci with 3+ alternate reads in any normal sample
-	fillout <- fillout[normal_count >= normal.count]
+	fillout <- fillout[fillout$normal_count >= normal.count,]
 	
 	# Add TAG to MAF
 	if (!('TAG' %in% names(maf))) {
@@ -60,7 +60,14 @@ parse_fillout_maf <- function(fillout) {
 					'-', End_Position,
 					':', Reference_Allele,
 					':', Tumor_Seq_Allele1)]
-	fillout = mutate(fillout, tmp_id = str_c(Tumor_Sample_Barcode, Chromosome, Start_Position, End_Position, Reference_Allele, Tumor_Seq_Allele1,Hugo_Symbol))
+	fillout[, tmp_id := stringr::str_c('chr', Chromosome,
+					':', Start_Position,
+					'-', End_Position,
+					':', Reference_Allele,
+					':', Tumor_Seq_Allele1,
+					':', Tumor_Sample_Barcode,
+					':',Hugo_Symbol)]
+	#fillout = mutate(fillout, tmp_id = str_c(Tumor_Sample_Barcode, Chromosome, Start_Position, End_Position, Reference_Allele, Tumor_Seq_Allele1,Hugo_Symbol))
 	fillout = fillout[!duplicated(fillout$tmp_id),]
 	# Calculate frequencies and return
 	group_by(fillout, TAG) %>%
