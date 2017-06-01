@@ -58,7 +58,7 @@ def main():
 
 def run_wes_filters(args):
     tmpdir = tempfile.mkdtemp()
-    wes_filter_bin = os.path.realpath(__file__)
+    wes_filter_bin = os.path.dirname(os.path.realpath(__file__))
     tag_hotspot = os.path.join(wes_filter_bin,"tag_hotspots.py")
     apply_filter = os.path.join(wes_filter_bin,"applyFilter.sh")
     
