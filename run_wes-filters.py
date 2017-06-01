@@ -65,7 +65,7 @@ def run_wes_filters(args):
     #tag_hotspots
     if(args.verbose):
         logger.info("run_wes-filters: Tagging Hotspots")
-    tempMaf0 = os.join(tmpdir,"maf0.maf")
+    tempMaf0 = os.path.join(tmpdir,"maf0.maf")
     cmd =  tag_hotspot + " -v -m " + args.inputMaf  + " -itxt " + args.inputHSP + " -o " + tempMaf0
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
