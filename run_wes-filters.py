@@ -112,7 +112,7 @@ def run_wes_filters(args):
     if(args.FFPEPoolMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_ffpe_pool")
-        md =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_ffpe_pool.R") + " " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf + " -fo 1"
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_ffpe_pool.R") + " " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -126,7 +126,7 @@ def run_wes_filters(args):
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_normal_panel")
-        md =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf + " -fo 1"
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -140,7 +140,7 @@ def run_wes_filters(args):
     if(args.NormalCohortMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_cohort_normals")
-        md =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -153,10 +153,10 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Moving and cleaning temp directory")
     if(args.outdir):
-        outfile = os.path.join(args.outdir + args.outputMaf)
+        outfile = os.path.join(args.outdir , args.outputMaf)
     else:
-        outfile = os.path.join(os.getcwd() + args.outputMaf)
-    cmd = "mv" + tempMaf7 + " " + outfile
+        outfile = os.path.join(os.getcwd() , args.outputMaf)
+    cmd = "mv " + tempMaf7 + " " + outfile
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
