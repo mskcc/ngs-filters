@@ -74,7 +74,7 @@ def run_wes_filters(args):
     #black_list_region
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_blacklist_regions")
-    tempMaf1 = os.join(tmpdir,"maf1.maf")
+    tempMaf1 = os.path.join(tmpdir,"maf1.maf")
     cmd =  apply_filter + " filter_blacklist_regions.R " + tempMaf0  + " " + tempMaf1
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
@@ -83,7 +83,7 @@ def run_wes_filters(args):
     #filter_low_conf
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_low_conf")
-    tempMaf2 = os.join(tmpdir,"maf2.maf")
+    tempMaf2 = os.path.join(tmpdir,"maf2.maf")
     cmd =  apply_filter + " filter_low_conf.R " + tempMaf1  + " " + tempMaf2
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
@@ -92,7 +92,7 @@ def run_wes_filters(args):
     #filter_ffpe
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_ffpe")
-    tempMaf3 = os.join(tmpdir,"maf3.maf")
+    tempMaf3 = os.path.join(tmpdir,"maf3.maf")
     cmd =  apply_filter + " filter_ffpe.R " + tempMaf2  + " " + tempMaf3 
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
@@ -101,14 +101,14 @@ def run_wes_filters(args):
     #filter_dmp
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_dmp")
-    tempMaf4 = os.join(tmpdir,"maf4.maf")
+    tempMaf4 = os.path.join(tmpdir,"maf4.maf")
     cmd =  apply_filter + " filter_dmp.R " + tempMaf3  + " " + tempMaf4
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     
     #filter_ffpe_pool
-    tempMaf5 = os.join(tmpdir,"maf5.maf")
+    tempMaf5 = os.path.join(tmpdir,"maf5.maf")
     if(args.FFPEPoolMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_ffpe_pool")
@@ -122,7 +122,7 @@ def run_wes_filters(args):
         tempMaf5 = tempMaf4
     
     #filter_normal_panel
-    tempMaf6 = os.join(tmpdir,"maf6.maf")
+    tempMaf6 = os.path.join(tmpdir,"maf6.maf")
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_normal_panel")
@@ -136,7 +136,7 @@ def run_wes_filters(args):
         tempMaf6 = tempMaf5
     
     #filter_cohort_normals
-    tempMaf7 = os.join(tmpdir,"maf7.maf")
+    tempMaf7 = os.path.join(tmpdir,"maf7.maf")
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_cohort_normals")
