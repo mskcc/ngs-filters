@@ -93,7 +93,7 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_ffpe")
     tempMaf3 = os.join(tmpdir,"maf3.maf")
-    cmd =  apply_filter + " filter_ffpe.R " + tempMaf2  + " " + tempMaf3
+    cmd =  apply_filter + " filter_ffpe.R " + tempMaf2  + " " + tempMaf3 
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
@@ -112,7 +112,7 @@ def run_wes_filters(args):
     if(args.FFPEPoolMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_ffpe_pool")
-        md =  apply_filter + " filter_ffpe_pool.R " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf
+        md =  apply_filter + " filter_ffpe_pool.R " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -126,7 +126,7 @@ def run_wes_filters(args):
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_normal_panel")
-        md =  apply_filter + " filter_normal_panel.R " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf
+        md =  apply_filter + " filter_normal_panel.R " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)

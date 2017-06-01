@@ -56,7 +56,7 @@ if( ! interactive() ) {
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
   parser$add_argument('-f', '--fillout', type='character', help='FILLOUT.vep.maf file')
-  parser$add_argument('-n', '--reads', type='character', default=3, help='Alternate read threshold')
+  parser$add_argument('-n', '--reads', type='double', default=3, help='Alternate read threshold')
   parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
   args=parser$parse_args()
 
@@ -66,7 +66,7 @@ if( ! interactive() ) {
   alt.reads <- args$reads
   outfile <- args$outfile
 
-  maf.out <- annotate_maf(maf, fillout)
+  maf.out <- annotate_maf(maf, fillout, alt.reads)
   if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
   } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
 }
