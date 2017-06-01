@@ -41,7 +41,8 @@ if (!interactive()) {
   rm(junk)
 
   args = commandArgs(trailingOnly = FALSE)
-  path = dirname(stringr::str_replace((args[4]), '--file=', ''))
+  path = dirname(sys.frame(1)$ofile)
+  #path = dirname(stringr::str_replace((args[4]), '--file=', ''))
 
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
