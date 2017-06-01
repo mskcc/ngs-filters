@@ -75,7 +75,7 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_blacklist_regions")
     tempMaf1 = os.path.join(tmpdir,"maf1.maf")
-    cmd =  apply_filter + " filter_blacklist_regions.R " + tempMaf0  + " " + tempMaf1
+    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_blacklist_regions.R") + " " + tempMaf0  + " " + tempMaf1
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
@@ -84,7 +84,7 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_low_conf")
     tempMaf2 = os.path.join(tmpdir,"maf2.maf")
-    cmd =  apply_filter + " filter_low_conf.R " + tempMaf1  + " " + tempMaf2
+    cmd =  apply_filter + " " + os.path.join(wes_filter_bin, "filter_low_conf.R") + " " + tempMaf1  + " " + tempMaf2
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
@@ -93,7 +93,7 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_ffpe")
     tempMaf3 = os.path.join(tmpdir,"maf3.maf")
-    cmd =  apply_filter + " filter_ffpe.R " + tempMaf2  + " " + tempMaf3 
+    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_ffpe.R") + " " + tempMaf2  + " " + tempMaf3 
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
@@ -102,7 +102,7 @@ def run_wes_filters(args):
     if(args.verbose):
         logger.info("run_wes-filters: Applying filter_dmp")
     tempMaf4 = os.path.join(tmpdir,"maf4.maf")
-    cmd =  apply_filter + " filter_dmp.R " + tempMaf3  + " " + tempMaf4
+    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_dmp.R") + " " + tempMaf3  + " " + tempMaf4
     if(args.verbose):
         logger.info("run_wes-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
@@ -112,7 +112,7 @@ def run_wes_filters(args):
     if(args.FFPEPoolMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_ffpe_pool")
-        md =  apply_filter + " filter_ffpe_pool.R " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf + " -fo 1"
+        md =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_ffpe_pool.R") + " " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -126,7 +126,7 @@ def run_wes_filters(args):
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_normal_panel")
-        md =  apply_filter + " filter_normal_panel.R " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf + " -fo 1"
+        md =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -140,7 +140,7 @@ def run_wes_filters(args):
     if(args.NormalCohortMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_cohort_normals")
-        md =  apply_filter + " filter_cohort_normals.R " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf
+        md =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
