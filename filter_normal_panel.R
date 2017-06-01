@@ -76,18 +76,15 @@ if( ! interactive() ) {
   if(fillout.format == 2){
 	  parsed_fillout = parse_fillout(fillout)
   }else{
-	  # index
+	  #index
 	  fillout[, TAG := stringr::str_c('chr', Chromosome,
 					  ':', Start_Position,
 					  '-', End_Position,
 					  ':', Reference_Allele,
 					  ':', Tumor_Seq_Allele2)]
 	  fillout = fillout[!duplicated(fillout$TAG),]
-	  parsed_fillout = fillout
 	  # Calculate frequencies and return
-	  group_by(parsed_fillout, TAG) %>%
-			  summarize(normal_count = sum(n_alt_count>=3))
-	  
+	  parsed_fillout <- group_by(fillout, TAG) %>% summarize(normal_count = sum(n_alt_count>=3))
   }
 
   maf.out <- annotate_maf(maf, parsed_fillout, normal.count)
