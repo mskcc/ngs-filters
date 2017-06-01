@@ -2,15 +2,11 @@
 '''
 @Description : This tool helps to run all scripts in wes-filter
 @Created :  05/30/2017
-@Updated : 05/30/2017
+@Updated : 06/01/2017
 @author : Ronak H Shah
 
-NORMALCOHORTBAMS="/ifs/res/share/pwg/NormalCohort/SetA/CuratedBAMsSetA"
-FFPEPOOLDIR="/ifs/res/share/soccin/Case_201601/Proj_06049_Pool/r_001"
-FFPEPOOLBAM=os.path.join(FFPEPOOLDIR,"/alignments/Proj_06049_Pool_indelRealigned_recal_s_UD_ffpepool1_N.bam")
-
 '''
-from __future__ import division
+
 import argparse
 import sys
 import os
@@ -30,11 +26,6 @@ try:
 except ImportError:
     logger.warning("run_wes-filters: coloredlogs is not installed, please install it if you wish to see color in logs on standard out.")
     pass
-try:
-    import pandas as pd
-except ImportError:
-    logger.fatal("run_wes-filters: pandas is not installed, please install pandas as it is required to run the process.")
-    sys.exit(1)
 
 def main():
    parser = argparse.ArgumentParser(prog='run_wes-filters.py', description=' This tool helps to tag hotspot events', usage='%(prog)s [options]')
