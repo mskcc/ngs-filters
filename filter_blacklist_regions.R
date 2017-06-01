@@ -36,12 +36,12 @@ annotate_maf <- function(maf, blacklist, rmsk) {
 
 if (!interactive()) {
 
-  pkgs = c('data.table', 'argparse')
+  pkgs = c('data.table', 'argparse', 'kimisc')
   junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
 
   args = commandArgs(trailingOnly = FALSE)
-  path = basename(this.file())
+  path = basename(thisfile())
   #path = dirname(stringr::str_replace((args[4]), '--file=', ''))
 
   parser=ArgumentParser()
