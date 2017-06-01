@@ -137,7 +137,7 @@ def run_wes_filters(args):
     
     #filter_cohort_normals
     tempMaf7 = os.path.join(tmpdir,"maf7.maf")
-    if(args.NormalPanelMaf):
+    if(args.NormalCohortMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_cohort_normals")
         md =  apply_filter + " filter_cohort_normals.R " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf
