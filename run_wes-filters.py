@@ -37,9 +37,10 @@ def main():
    parser.add_argument("-fpmaf", "--ffpe_pool_maf", action="store", dest="FFPEPoolMaf", required=False, type=str, metavar='/somepath/to/ffpe_pool.maf', help="Path to fillout maf file for FFPE artifacts")
    parser.add_argument("-ncmaf","--normal-cohort-maf",action="store", dest="NormalCohortMaf", required=False, type=str, metavar='/somepath/to/normalcohort.maf', help="Path to fillout maf file of cohort normals")
    parser.add_argument('-nsf', '--normalSamplesFile', action="store", dest="NormalCohortSamples", required=False, type=str,metavar='/somepath/to/normalcohort.list', help='File with list of normal samples')
-   parser.add_argument("-hsp", "--input-hotspot", action="store", dest="inputHSP", required=True, type=str, metavar='SomeID.txt', help="Input txt file which has hotspots")
+   parser.add_argument("-hsp", "--input-hotspot", action="store", dest="inputHSP", required=False, type=str, metavar='SomeID.txt', help="Input txt file which has hotspots")
    
    args = parser.parse_args()
+   this_dir, this_filename = os.path.split(__file__)
    if(args.NormalCohortMaf):
        if(args.NormalCohortSamples):
            pass
@@ -48,6 +49,10 @@ def main():
            sys.exit(1)
    else:
         pass
+   if(args.inputHSP):
+       pass
+   else:
+       args.inputHSP = os.path.join(this_dir,"data","hotspot-list-union-v1-v2.txt")
    if(args.verbose):
        logger.info("run_wes-filters: Started the run for wes-filters")
    (finalmaf) = run_wes_filters(args)
