@@ -107,7 +107,7 @@ def run_wes_filters(args):
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
-    if(os.path.isfile(tempMaf4)):
+    if(os.path.isfile(tempMaf5)):
         tempMaf5 = tempMaf5
     else:
         tempMaf5 = tempMaf4
