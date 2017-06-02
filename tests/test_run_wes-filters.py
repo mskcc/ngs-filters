@@ -53,7 +53,7 @@ def test_maf_fileSimilarity():
     outFileMaf = os.path.join(new_dir, "sample_output.maf")
     cmpFileMaf = os.path.join(new_dir, "data", "sample_output.maf")
     cmd = "sed -i -e '/^#/ d' " + outFileMaf 
-    subprocess(cmd, shell=True)
+    subprocess.call(cmd, shell=True)
     nose.tools.ok_(filecmp.cmp(outFileMaf, cmpFileMaf), msg="The current result text file and the original result text file for run_wes-filters are not the same") 
 
 if __name__ == '__main__':
