@@ -36,9 +36,18 @@ def main():
    parser.add_argument("-npmaf","--normal-panel-maf",action="store", dest="NormalPanelMaf", required=False, type=str, metavar='/somepath/to/normalpanel.maf', help="Path to fillout maf file of panel of standard normals")
    parser.add_argument("-fpmaf", "--ffpe_pool_maf", action="store", dest="FFPEPoolMaf", required=False, type=str, metavar='/somepath/to/ffpe_pool.maf', help="Path to fillout maf file for FFPE artifacts")
    parser.add_argument("-ncmaf","--normal-cohort-maf",action="store", dest="NormalCohortMaf", required=False, type=str, metavar='/somepath/to/normalcohort.maf', help="Path to fillout maf file of cohort normals")
+   parser$add_argument('-nsf', '--normalSamplesFile', action="store", dest="NormalCohortSamples", required=False, type='str', help='File with list of normal samples')
    parser.add_argument("-hsp", "--input-hotspot", action="store", dest="inputHSP", required=True, type=str, metavar='SomeID.txt', help="Input txt file which has hotspots")
    
    args = parser.parse_args()
+   if(args.NormalCohortMaf):
+       if(args.NormalCohortSamples):
+           pass
+       else:
+           logger.critical("run_wes-filters: Value for --normal-cohort-maf is give but --normalSamplesFile is empty")
+           sys.exit(1)
+    else:
+        pass
    if(args.verbose):
        logger.info("run_wes-filters: Started the run for wes-filters")
    (finalmaf) = run_wes_filters(args)
@@ -131,7 +140,7 @@ def run_wes_filters(args):
     if(args.NormalCohortMaf):
         if(args.verbose):
             logger.info("run_wes-filters: Applying filter_cohort_normals")
-        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf + " -N " + args.NormalCohortSamples
         if(args.verbose):
             logger.info("run_wes-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
