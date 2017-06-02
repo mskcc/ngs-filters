@@ -59,8 +59,11 @@ optional arguments:
                         Path to fillout maf file for FFPE artifacts
   -ncmaf /somepath/to/normalcohort.maf, --normal-cohort-maf /somepath/to/normalcohort.maf
                         Path to fillout maf file of cohort normals
+  -nsf /somepath/to/normalcohort.list, --normalSamplesFile /somepath/to/normalcohort.list
+                        File with list of normal samples
   -hsp SomeID.txt, --input-hotspot SomeID.txt
                         Input txt file which has hotspots
+                        
 ```
 
 example:
