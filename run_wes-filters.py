@@ -36,7 +36,7 @@ def main():
    parser.add_argument("-npmaf","--normal-panel-maf",action="store", dest="NormalPanelMaf", required=False, type=str, metavar='/somepath/to/normalpanel.maf', help="Path to fillout maf file of panel of standard normals")
    parser.add_argument("-fpmaf", "--ffpe_pool_maf", action="store", dest="FFPEPoolMaf", required=False, type=str, metavar='/somepath/to/ffpe_pool.maf', help="Path to fillout maf file for FFPE artifacts")
    parser.add_argument("-ncmaf","--normal-cohort-maf",action="store", dest="NormalCohortMaf", required=False, type=str, metavar='/somepath/to/normalcohort.maf', help="Path to fillout maf file of cohort normals")
-   parser.add_argument('-nsf', '--normalSamplesFile', action="store", dest="NormalCohortSamples", required=False, type='str',metavar='/somepath/to/normalcohort.list', help='File with list of normal samples')
+   parser.add_argument('-nsf', '--normalSamplesFile', action="store", dest="NormalCohortSamples", required=False, type=str,metavar='/somepath/to/normalcohort.list', help='File with list of normal samples')
    parser.add_argument("-hsp", "--input-hotspot", action="store", dest="inputHSP", required=True, type=str, metavar='SomeID.txt', help="Input txt file which has hotspots")
    
    args = parser.parse_args()
