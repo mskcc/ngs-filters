@@ -46,7 +46,7 @@ def main():
        else:
            logger.critical("run_wes-filters: Value for --normal-cohort-maf is give but --normalSamplesFile is empty")
            sys.exit(1)
-    else:
+   else:
         pass
    if(args.verbose):
        logger.info("run_wes-filters: Started the run for wes-filters")
