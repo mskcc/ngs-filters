@@ -60,19 +60,31 @@ if( ! interactive() ) {
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
   parser$add_argument('-f', '--fillout', type='character', help='GetBaseCountsMultiSample output')
-  parser$add_argument('-r', '--read_count', type='character', default=3, help='FFPE pool read-count threshold')
+  parser$add_argument('-fo', '--fillout_format', type='double', help='GetBaseCountsMultiSample output format, MAF(1), Tab-delimited with VCF coordinates(2:default)', default=2)
+  parser$add_argument('-r', '--read_count', type='double', default=3, help='FFPE pool read-count threshold')
   parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
   args=parser$parse_args()
 
   if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
   } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
   fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
-  alt.reads <- args$normals
+  fillout.format<-args$fillout_format
+  alt.reads <- args$read_count
   outfile <- args$outfile
-
+if(fillout.format == 2){
   parsed_fillout = parse_fillout(fillout)
+}else{
+	# index
+	fillout[, TAG := stringr::str_c('chr', Chromosome,
+					':', Start_Position,
+					'-', End_Position,
+					':', Reference_Allele,
+					':', Tumor_Seq_Allele2)]
+	fillout = fillout[!duplicated(fillout$TAG),]
+	parsed_fillout = fillout
+}
 
-  maf.out <- annotate_maf(maf, parsed_fillout)
+  maf.out <- annotate_maf(maf, parsed_fillout,alt.reads)
   if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
   } else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
 }

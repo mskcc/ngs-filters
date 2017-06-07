@@ -54,7 +54,7 @@ if( ! interactive() ) {
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
   parser$add_argument('-f', '--fillout', type='character', help='FILLOUT.vep.maf file')
-  parser$add_argument('-n', '--reads', type='character', default=3, help='Alternate read threshold')
+  parser$add_argument('-n', '--reads', type='double', default=3, help='Alternate read threshold')
   parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
   parser$add_argument('-r', '--regex', type='character', help='RegEx for normals', default = '')
   parser$add_argument('-N', '--normalSamplesFile', type='character', help='File with list of normal samples', default='')

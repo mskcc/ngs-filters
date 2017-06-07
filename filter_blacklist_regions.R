@@ -36,12 +36,13 @@ annotate_maf <- function(maf, blacklist, rmsk) {
 
 if (!interactive()) {
 
-  pkgs = c('data.table', 'argparse')
+  pkgs = c('data.table', 'argparse', 'kimisc')
   junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
   rm(junk)
 
   args = commandArgs(trailingOnly = FALSE)
-  path = dirname(stringr::str_replace((args[4]), '--file=', ''))
+  path = dirname(thisfile())
+  #path = dirname(stringr::str_replace((args[4]), '--file=', ''))
 
   parser=ArgumentParser()
   parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')

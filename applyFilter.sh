@@ -53,13 +53,15 @@ echo "#$VTAG FILTER=$(basename $FILTER)" >>$MAFOUT
 
 TMPMAF=$(uuidgen).maf
 
-$FILTER -m $MAFIN -o $TMPMAF $*
+
+Rscript --vanilla  $FILTER -m $MAFIN -o $TMPMAF $*
 EXIT_CODE=$?
 
 if [ "$EXIT_CODE" != "0" ]; then
     echo "ERROR IN R-script"
     exit 1
 fi
+
 
 cat $TMPMAF >>$MAFOUT
 rm $TMPMAF

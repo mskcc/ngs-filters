@@ -26,6 +26,51 @@ The first lines of the output MAF will look as follows:
 #wes-filters/applyFilter.sh VERSION=v1.0.1-2-g4d3694b FILTER=filter_blacklist_regions.R
 ```
 
+## Script to run all wes-filter scripts 
+
+This script currently runs the following scripts in given order using *applyFilter.sh*:
+- tag_hotspots
+- filter_blacklist_region
+- filter_low_conf
+- filter_ffpe
+- filter_dmp
+- filter_ffpe_pool (if fillout maf for ffpe sample is given)
+- filter_normal_panel (if fillout maf for standard normal sample is given)
+- filter_cohort_normal (if fillout maf for cohort normal sample is given)
+
+Usage:
+```
+usage: run_wes-filters.py [options]
+
+This tool helps to tag hotspot events
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         make lots of noise
+  -m SomeID.maf, --input-maf SomeID.maf
+                        Input maf file which needs to be tagged
+  -o SomeID.maf, --output-maf SomeID.maf
+                        Output maf file name
+  -outdir /somepath/output, --outDir /somepath/output
+                        Full Path to the output dir.
+  -npmaf /somepath/to/normalpanel.maf, --normal-panel-maf /somepath/to/normalpanel.maf
+                        Path to fillout maf file of panel of standard normals
+  -fpmaf /somepath/to/ffpe_pool.maf, --ffpe_pool_maf /somepath/to/ffpe_pool.maf
+                        Path to fillout maf file for FFPE artifacts
+  -ncmaf /somepath/to/normalcohort.maf, --normal-cohort-maf /somepath/to/normalcohort.maf
+                        Path to fillout maf file of cohort normals
+  -nsf /somepath/to/normalcohort.list, --normalSamplesFile /somepath/to/normalcohort.list
+                        File with list of normal samples
+  -hsp SomeID.txt, --input-hotspot SomeID.txt
+                        Input txt file which has hotspots
+                        
+```
+
+example:
+```
+python /home/shahr2/git/wes-filters/run_wes-filters.py -m output.maf -o output_wes.maf -npmaf /ifs/work/prism/shahr2/cmo_fill/output_fill.maf -f/ifs/work/prism/shahr2/cmo_fill/output_FFPE.maf -hsp /home/shahr2/git/hotspot-whitelist/v2/hotspot-list-union-v1-v2.txt -v
+```
+
 ## Filters
 * Common variants
 A variant is considered common if its minor allele frequency in [ExAC](http://exac.broadinstitute.org/) exceeds 0.0004. This filter needs an `ExAC_AF` column which easiest is can be added to a MAF by running [maf2maf](https://github.com/mskcc/vcf2maf), which now also annotates the `FILTER` column. This hopefully will render this filter script obsolete. With the `-f` flag this filter will annotate a maf with information from another MAF.
