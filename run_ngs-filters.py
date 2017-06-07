@@ -1,6 +1,6 @@
 #!/usr/bin/python
 '''
-@Description : This tool helps to run all scripts in wes-filter
+@Description : This tool helps to run all scripts in ngs-filter
 @Created :  05/30/2017
 @Updated : 06/01/2017
 @author : Ronak H Shah
@@ -24,11 +24,11 @@ try:
     import coloredlogs
     coloredlogs.install(level='DEBUG')
 except ImportError:
-    logger.warning("run_wes-filters: coloredlogs is not installed, please install it if you wish to see color in logs on standard out.")
+    logger.warning("run_ngs-filters: coloredlogs is not installed, please install it if you wish to see color in logs on standard out.")
     pass
 
 def main():
-   parser = argparse.ArgumentParser(prog='run_wes-filters.py', description=' This tool helps to tag hotspot events', usage='%(prog)s [options]')
+   parser = argparse.ArgumentParser(prog='run_ngs-filters.py', description=' This tool helps to tag hotspot events', usage='%(prog)s [options]')
    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="make lots of noise")
    parser.add_argument("-m", "--input-maf", action="store", dest="inputMaf", required=True, type=str, metavar='SomeID.maf', help="Input maf file which needs to be tagged")
    parser.add_argument("-o","--output-maf", action="store", dest="outputMaf", required=True, type=str, metavar='SomeID.maf', help="Output maf file name")
@@ -45,7 +45,7 @@ def main():
        if(args.NormalCohortSamples):
            pass
        else:
-           logger.critical("run_wes-filters: Value for --normal-cohort-maf is give but --normalSamplesFile is empty")
+           logger.critical("run_ngs-filters: Value for --normal-cohort-maf is give but --normalSamplesFile is empty")
            sys.exit(1)
    else:
         pass
@@ -54,11 +54,11 @@ def main():
    else:
        args.inputHSP = os.path.join(this_dir,"data","hotspot-list-union-v1-v2.txt")
    if(args.verbose):
-       logger.info("run_wes-filters: Started the run for wes-filters")
+       logger.info("run_ngs-filters: Started the run for wes-filters")
    (finalmaf) = run_wes_filters(args)
    if(args.verbose):
-       logger.info("run_wes-filters: Output is written in %s", finalmaf)
-       logger.info("run_wes-filters: Finished the run for wes-filters.")
+       logger.info("run_ngs-filters: Output is written in %s", finalmaf)
+       logger.info("run_ngs-filters: Finished the run for wes-filters.")
 
 
 def run_wes_filters(args):
@@ -69,57 +69,57 @@ def run_wes_filters(args):
     
     #tag_hotspots
     if(args.verbose):
-        logger.info("run_wes-filters: Tagging Hotspots")
+        logger.info("run_ngs-filters: Tagging Hotspots")
     tempMaf0 = os.path.join(tmpdir,"maf0.maf")
     cmd =  "python " + tag_hotspot + " -v -m " + args.inputMaf  + " -itxt " + args.inputHSP + " -o " + tempMaf0
     if(args.verbose):
-        logger.info("run_wes-filters: Running, %s",cmd)
+        logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     
     #black_list_region
     if(args.verbose):
-        logger.info("run_wes-filters: Applying filter_blacklist_regions")
+        logger.info("run_ngs-filters: Applying filter_blacklist_regions")
     tempMaf1 = os.path.join(tmpdir,"maf1.maf")
     cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_blacklist_regions.R") + " " + tempMaf0  + " " + tempMaf1
     if(args.verbose):
-        logger.info("run_wes-filters: Running, %s",cmd)
+        logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     
     #filter_low_conf
     if(args.verbose):
-        logger.info("run_wes-filters: Applying filter_low_conf")
+        logger.info("run_ngs-filters: Applying filter_low_conf")
     tempMaf2 = os.path.join(tmpdir,"maf2.maf")
     cmd =  apply_filter + " " + os.path.join(wes_filter_bin, "filter_low_conf.R") + " " + tempMaf1  + " " + tempMaf2
     if(args.verbose):
-        logger.info("run_wes-filters: Running, %s",cmd)
+        logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     
     #filter_ffpe
     if(args.verbose):
-        logger.info("run_wes-filters: Applying filter_ffpe")
+        logger.info("run_ngs-filters: Applying filter_ffpe")
     tempMaf3 = os.path.join(tmpdir,"maf3.maf")
     cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_ffpe.R") + " " + tempMaf2  + " " + tempMaf3 
     if(args.verbose):
-        logger.info("run_wes-filters: Running, %s",cmd)
+        logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     
     #filter_dmp
     if(args.verbose):
-        logger.info("run_wes-filters: Applying filter_dmp")
+        logger.info("run_ngs-filters: Applying filter_dmp")
     tempMaf4 = os.path.join(tmpdir,"maf4.maf")
     cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_dmp.R") + " " + tempMaf3  + " " + tempMaf4
     if(args.verbose):
-        logger.info("run_wes-filters: Running, %s",cmd)
+        logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     
     #filter_ffpe_pool
     tempMaf5 = os.path.join(tmpdir,"maf5.maf")
     if(args.FFPEPoolMaf):
         if(args.verbose):
-            logger.info("run_wes-filters: Applying filter_ffpe_pool")
+            logger.info("run_ngs-filters: Applying filter_ffpe_pool")
         cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_ffpe_pool.R") + " " + tempMaf4  + " " + tempMaf5 + " -f " + args.FFPEPoolMaf + " -fo 1"
         if(args.verbose):
-            logger.info("run_wes-filters: Running, %s",cmd)
+            logger.info("run_ngs-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
     if(os.path.isfile(tempMaf5)):
         tempMaf5 = tempMaf5
@@ -130,10 +130,10 @@ def run_wes_filters(args):
     tempMaf6 = os.path.join(tmpdir,"maf6.maf")
     if(args.NormalPanelMaf):
         if(args.verbose):
-            logger.info("run_wes-filters: Applying filter_normal_panel")
+            logger.info("run_ngs-filters: Applying filter_normal_panel")
         cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalPanelMaf + " -fo 1"
         if(args.verbose):
-            logger.info("run_wes-filters: Running, %s",cmd)
+            logger.info("run_ngs-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
     if(os.path.isfile(tempMaf6)):
         tempMaf6 = tempMaf6
@@ -144,10 +144,10 @@ def run_wes_filters(args):
     tempMaf7 = os.path.join(tmpdir,"maf7.maf")
     if(args.NormalCohortMaf):
         if(args.verbose):
-            logger.info("run_wes-filters: Applying filter_cohort_normals")
+            logger.info("run_ngs-filters: Applying filter_cohort_normals")
         cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf5  + " " + tempMaf6 + " -f " + args.NormalCohortMaf + " -N " + args.NormalCohortSamples
         if(args.verbose):
-            logger.info("run_wes-filters: Running, %s",cmd)
+            logger.info("run_ngs-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
     if(os.path.isfile(tempMaf7)):
         tempMaf7 = tempMaf7
@@ -156,17 +156,17 @@ def run_wes_filters(args):
     
     #move to output name
     if(args.verbose):
-        logger.info("run_wes-filters: Moving and cleaning temp directory")
+        logger.info("run_ngs-filters: Moving and cleaning temp directory")
     if(args.outdir):
         outfile = os.path.join(args.outdir , args.outputMaf)
     else:
         outfile = os.path.join(os.getcwd() , args.outputMaf)
     cmd = "mv " + tempMaf7 + " " + outfile
     if(args.verbose):
-        logger.info("run_wes-filters: Running, %s",cmd)
+        logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     if(args.verbose):
-        logger.info("run_wes-filters: Running, rm -rf %s",tmpdir)
+        logger.info("run_ngs-filters: Running, rm -rf %s",tmpdir)
     subprocess.call("rm -rf " + tmpdir, shell = True)
     return(outfile)
 
@@ -176,5 +176,5 @@ if __name__ == "__main__":
     main()
     end_time = time.time()
     totaltime = end_time - start_time
-    logging.info("run_wes-filters: Elapsed time was %g seconds", totaltime)
+    logging.info("run_ngs-filters: Elapsed time was %g seconds", totaltime)
     sys.exit(0)
