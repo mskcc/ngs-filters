@@ -79,7 +79,7 @@ filter_artifacts <- function(maf, threshold = 0.1) {
 
 if (!interactive()) {
 
-    pkgs = c('data.table', 'argparse', 'Biostrings')
+    pkgs = c('data.table', 'argparse')
     junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
     rm(junk)
 
