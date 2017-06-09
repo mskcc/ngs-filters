@@ -146,7 +146,7 @@ This script wraps `fpfilter.pl` from [variant-filter](https://github.com/ckandot
 Required R Packages:
 
 ```bash
-$ ./Rscript install-packages.R
+$ Rscript install-packages.R
 ```
 
 Required Python Libraries
