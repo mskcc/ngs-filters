@@ -23,7 +23,7 @@ def setup_module():
     hotspotFile = os.path.join(new_dir, "data", "hotspot-list-union-v1-v2.txt")
     NoramlPanelFill = os.path.join(new_dir, "data", "sample_input_fill.maf")
     FFPEFill = os.path.join(new_dir, "data", "sample_input_FFPE.maf")
-    scriptFile = os.path.join(new_dir, "run_wes-filters.py")
+    scriptFile = os.path.join(new_dir, "run_ngs-filters.py")
     cmd = "python " + scriptFile + " -v -m " + inputFileMaf + " -o " + outFileMaf + " -npmaf " + NoramlPanelFill + " -fpmaf " + FFPEFill + " -hsp " + hotspotFile
     args = shlex.split(cmd)
     if(os.path.isfile(outFileMaf)):
@@ -54,7 +54,7 @@ def test_maf_fileSimilarity():
     cmpFileMaf = os.path.join(new_dir, "data", "sample_output.maf")
     cmd = "sed -i -e '/^#/ d' " + outFileMaf 
     subprocess.call(cmd, shell=True)
-    nose.tools.ok_(filecmp.cmp(outFileMaf, cmpFileMaf), msg="The current result text file and the original result text file for run_wes-filters are not the same") 
+    nose.tools.ok_(filecmp.cmp(outFileMaf, cmpFileMaf), msg="The current result text file and the original result text file for run_ngs-filters are not the same") 
 
 if __name__ == '__main__':
     nose.main()
