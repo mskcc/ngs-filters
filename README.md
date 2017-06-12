@@ -141,12 +141,12 @@ This script wraps `fpfilter.pl` from [variant-filter](https://github.com/ckandot
 ./run-fpfilter.py -v input.vcf -b tumor.bam -g genome -f path/to/fpfilter.pl
 ```
 
-## Install Dependencies
+## How to Install Dependencies
 
 Required R Packages:
 
 ```bash
-$ ./Rscript install-packages.R
+$ Rscript install-packages.R
 ```
 
 Required Python Libraries
