@@ -7,10 +7,10 @@ then
     # if both Git CLI and .git exist, then use "git describe" to create version tag
     SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --always --long)
 else
-    if [ -r ".git-commit-hash" ]
+    if [ -r "${SDIR}/.git-commit-hash" ]
     then
         # if .git-commit-hash exists, then use the git commit hash stored in .git-commit-hash
-        SVERSION=$(cat .git-commit-hash)
+        SVERSION=$(cat ${SDIR}/.git-commit-hash)
     else
         # there is no way to figure out git commit hash
         SVERSION="unknown"
