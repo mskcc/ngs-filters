@@ -101,6 +101,6 @@ if( ! interactive() ) {
 	}
 	
 	maf.out <- annotate_maf(maf, parsed_fillout, normal.count)
-	if (outfile == 'stdout') { write.table(maf.out, stdout(), sep = "\t", col.names = T, row.names = F, quote = F)
-	} else { write.table(maf.out, outfile, sep = "\t", col.names = T, row.names = F, quote = F) }
+	if (outfile == 'stdout') { write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
+	} else { write.table(maf.out, outfile, na="", sep = "\t", col.names = T, row.names = F, quote = F) }
 }

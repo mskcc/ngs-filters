@@ -43,7 +43,8 @@ def setup_module():
         sys.exit(1)
              
 def teardown_module():
-     shutil.rmtree(new_dir)
+     #shutil.rmtree(new_dir)
+     pass
 
 def test_maf_fileSimilarity():
     outFileMaf = os.path.join(new_dir, "sample_output.maf")
