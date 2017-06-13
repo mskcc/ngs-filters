@@ -36,8 +36,8 @@ if (!interactive()) {
     parser$add_argument('-o', '--outfile', type = 'character', help = 'Output file', default = 'stdout')
     args=parser$parse_args()
 
-    if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
-    } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
+    if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin',  colClasses=c(Chromosome="character"), showProgress = F))
+    } else { maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F)) }
     outfile <- args$outfile
 
     maf.out <- annotate_maf(maf)

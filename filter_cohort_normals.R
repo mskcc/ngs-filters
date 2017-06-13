@@ -61,8 +61,8 @@ if( ! interactive() ) {
   args=parser$parse_args()
 
   if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
-  } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
-  fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
+  } else { maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F)) }
+  fillout <- suppressWarnings(fread(args$fillout, colClasses=c(Chromosome="character"),showProgress = F))
   alt.reads <- args$reads
   outfile <- args$outfile
   normal.regex <- args$regex

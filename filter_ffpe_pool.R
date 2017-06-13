@@ -66,8 +66,8 @@ if( ! interactive() ) {
   args=parser$parse_args()
 
   if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
-  } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
-  fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
+  } else { maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F)) }
+  fillout <- suppressWarnings(fread(args$fillout, colClasses=c(Chromosome="character"), showProgress = F))
   fillout.format<-args$fillout_format
   alt.reads <- args$read_count
   outfile <- args$outfile

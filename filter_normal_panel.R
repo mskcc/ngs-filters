@@ -88,8 +88,8 @@ if( ! interactive() ) {
 	parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
 	args=parser$parse_args()
 	
-	maf <- suppressWarnings(fread(args$maf, showProgress = F))
-	fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
+	maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F))
+	fillout <- suppressWarnings(fread(args$fillout, colClasses=c(Chromosome="character"), showProgress = F))
 	fillout.format<-args$fillout_format
 	normal.count <- args$normal_count
 	outfile <- args$outfile
