@@ -97,8 +97,8 @@ if (!interactive()) {
 
     if(args$identify & args$filter) stop("Cannot identify and filter at the same time")
 
-    if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
-    } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
+    if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', colClasses=c(Chromosome="character"), showProgress = F))
+    } else { maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F)) }
 
     if(args$identify) {
         maf <- add_mut_tri(maf)

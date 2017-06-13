@@ -23,10 +23,10 @@ The first lines of the output MAF will look as follows:
 
 ```
 #version 2.4
-#wes-filters/applyFilter.sh VERSION=v1.0.1-2-g4d3694b FILTER=filter_blacklist_regions.R
+#ngs-filters/applyFilter.sh VERSION=v1.0.1-2-g4d3694b FILTER=filter_blacklist_regions.R
 ```
 
-## Script to run all wes-filter scripts 
+## Script to run all ngs-filter scripts 
 
 This script currently runs the following scripts in given order using *applyFilter.sh*:
 - tag_hotspots
@@ -40,7 +40,7 @@ This script currently runs the following scripts in given order using *applyFilt
 
 Usage:
 ```
-usage: run_wes-filters.py [options]
+usage: run_ngs-filters.py [options]
 
 This tool helps to tag hotspot events
 
@@ -68,7 +68,7 @@ optional arguments:
 
 example:
 ```
-python /home/shahr2/git/wes-filters/run_wes-filters.py -m output.maf -o output_wes.maf -npmaf /ifs/work/prism/shahr2/cmo_fill/output_fill.maf -f/ifs/work/prism/shahr2/cmo_fill/output_FFPE.maf -hsp /home/shahr2/git/hotspot-whitelist/v2/hotspot-list-union-v1-v2.txt -v
+python /home/shahr2/git/ngs-filters/run_wes-filters.py -m output.maf -o output_wes.maf -npmaf /ifs/work/prism/shahr2/cmo_fill/output_fill.maf -f/ifs/work/prism/shahr2/cmo_fill/output_FFPE.maf -hsp /home/shahr2/git/hotspot-whitelist/v2/hotspot-list-union-v1-v2.txt -v
 ```
 
 ## Filters
