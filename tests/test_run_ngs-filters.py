@@ -12,18 +12,20 @@ import subprocess
 from subprocess import Popen
 import shlex
 import nose
-import logging
+import logging, tempfile, shutil, sys
+
+new_dir = tempfile.mkdtemp()
+this_dir = os.path.realpath(__file__)
+this_dir = "/".join(this_dir.split("/")[0:-2])
 
 def setup_module(): 
-    this_dir, this_filename = os.path.split(__file__)
-    new_dir = os.path.dirname(this_dir)
-    inputFileMaf = os.path.join(new_dir, "data", "sample_input.maf")
+    inputFileMaf = os.path.join(this_dir, "data", "sample_input.maf")
     outFileMaf = os.path.join(new_dir, "sample_output.maf")
-    cmpFileMaf = os.path.join(new_dir, "data", "sample_output.maf")
-    hotspotFile = os.path.join(new_dir, "data", "hotspot-list-union-v1-v2.txt")
-    NoramlPanelFill = os.path.join(new_dir, "data", "sample_input_fill.maf")
-    FFPEFill = os.path.join(new_dir, "data", "sample_input_FFPE.maf")
-    scriptFile = os.path.join(new_dir, "run_wes-filters.py")
+    cmpFileMaf = os.path.join(this_dir, "data", "sample_output.maf")
+    hotspotFile = os.path.join(this_dir, "data", "hotspot-list-union-v1-v2.txt")
+    NoramlPanelFill = os.path.join(this_dir, "data", "sample_input_fill.maf")
+    FFPEFill = os.path.join(this_dir, "data", "sample_input_FFPE.maf")
+    scriptFile = os.path.join(this_dir, "run_ngs-filters.py")
     cmd = "python " + scriptFile + " -v -m " + inputFileMaf + " -o " + outFileMaf + " -npmaf " + NoramlPanelFill + " -fpmaf " + FFPEFill + " -hsp " + hotspotFile
     args = shlex.split(cmd)
     if(os.path.isfile(outFileMaf)):
@@ -41,20 +43,15 @@ def setup_module():
         sys.exit(1)
              
 def teardown_module():
-    this_dir, this_filename = os.path.split(__file__)
-    new_dir = os.path.dirname(this_dir)
-    outFileMaf = os.path.join(new_dir, "sample_output.maf")
-    if(os.path.isfile(outFileMaf)):
-        os.remove(outFileMaf)
+     shutil.rmtree(new_dir)
 
 def test_maf_fileSimilarity():
-    this_dir, this_filename = os.path.split(__file__)
-    new_dir = os.path.dirname(this_dir)
     outFileMaf = os.path.join(new_dir, "sample_output.maf")
-    cmpFileMaf = os.path.join(new_dir, "data", "sample_output.maf")
+    cmpFileMaf = os.path.join(this_dir, "data", "sample_output.maf")
+    
     cmd = "sed -i -e '/^#/ d' " + outFileMaf 
     subprocess.call(cmd, shell=True)
-    nose.tools.ok_(filecmp.cmp(outFileMaf, cmpFileMaf), msg="The current result text file and the original result text file for run_wes-filters are not the same") 
+    nose.tools.ok_(filecmp.cmp(outFileMaf, cmpFileMaf), msg="The current result text file and the original result text file for run_ngs-filters are not the same") 
 
 if __name__ == '__main__':
     nose.main()

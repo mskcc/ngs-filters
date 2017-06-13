@@ -1,7 +1,23 @@
 #!/bin/bash
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
-SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --always --long)
+
+if [ -x "$(command -v git)" ] && [ -r "$SDIR/.git" ]
+then
+    # if both Git CLI and .git exist, then use "git describe" to create version tag
+    SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --always --long)
+else
+    if [ -r "${SDIR}/.git-commit-hash" ]
+    then
+        # if .git-commit-hash exists, then use the git commit hash stored in .git-commit-hash
+        SVERSION=$(cat ${SDIR}/.git-commit-hash)
+    else
+        # there is no way to figure out git commit hash
+        SVERSION="unknown"
+    fi
+fi
+
+# construct version tag
 VTAG="$(basename $SDIR)/$(basename $0) VERSION=$SVERSION"
 
 usage() {
