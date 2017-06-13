@@ -12,7 +12,9 @@ revc <- function(x) strReverse(chartr('ACGT', 'TGCA', x))
 add_mut_tri <- function(maf) {
 
   if (!"TriNuc" %in% names(maf)) {
-    stop("must have TriNuc column")
+	  if (!"flanking_bps" %in% names(maf)) {
+		  stop("must have TriNuc/flanking_bps column")
+	  }
   }
 
   ### check for t_var_freq
@@ -21,10 +23,17 @@ add_mut_tri <- function(maf) {
   t_var_freq := as.numeric(t_alt_count)/(as.numeric(t_alt_count)+as.numeric(t_ref_count))]
 
   ### reverse complement Ref_Tri if ref is either G or A
+  if("TriNuc" %in% names(maf)){
   maf[Variant_Type == "SNP",
       Ref_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
                         revc(TriNuc),
                         TriNuc)]
+	}else{
+		maf[Variant_Type == "SNP",
+				Ref_Tri := ifelse(Reference_Allele %in% c('G', 'A'),
+						revc(flanking_bps),
+						flanking_bps)]
+	}
   ### reverse complement Tumor_Seq_Allele2 if ref is either G or A
   Tumor_Seq_Allele2_CT <- maf[Variant_Type == "SNP",
                               ifelse(Reference_Allele %in% c('G', 'A'),
@@ -70,7 +79,7 @@ filter_artifacts <- function(maf, threshold = 0.1) {
 
 if (!interactive()) {
 
-    pkgs = c('data.table', 'argparse', 'Biostrings')
+    pkgs = c('data.table', 'argparse')
     junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
     rm(junk)
 
