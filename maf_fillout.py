@@ -17,12 +17,14 @@ parser.add_argument('-b', '--bams', help = 'BAM files to fillout with', required
 parser.add_argument('-g', '--genome', help = 'Reference assembly of BAM files, e.g. hg19/grch37/b37', required = True, choices = cmo.util.genomes.keys())
 parser.add_argument('-o', '--output', help = 'Prefix for output file', required = False)
 parser.add_argument('-n', '--n_threads', help = 'Multithread', default = 10, required = False)
+parser.add_argument('-mo', '--maf_output', help = 'Output MAF (boolean)', action = 'store_true', default = False, required = False)
 args = parser.parse_args()
 
 maf = args.maf
 bams = args.bams
 genome = args.genome.lower()
 n = args.n_threads
+mo = args.maf_output
 if args.output is None:
 	output = os.path.splitext(os.path.basename(maf))[0]+'.fillout'
 else:
@@ -63,6 +65,8 @@ subprocess.call(uniqRCall, shell = True)
 
 ### Call GetBaseCountsMultiSample
 gbcmCall = gbcmPath+' --thread %s --filter_improper_pair 0 --fasta %s --maf %s --output %s %s' % (n, genomePath, tmpMaf, output, bamString)
+if mo:
+    gbcmCall += ' --omaf'
 subprocess.call(gbcmCall, shell = True)
 
 ### Remove temporary MAF
