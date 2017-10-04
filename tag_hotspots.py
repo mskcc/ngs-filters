@@ -49,11 +49,11 @@ def main():
        logger.info("tag_hotspots: Finished the run for tagging hotspots.")
 
 def read_maf(args):
-    dataDF = pd.read_table(args.inputMaf, comment="#", low_memory=False)
+    dataDF = pd.read_table(args.inputMaf, comment="#", dtype=str)
     return(dataDF)
 
 def read_hotspots(args):
-    dataDF = pd.read_table(args.inputTxt, comment="#", low_memory=False)
+    dataDF = pd.read_table(args.inputTxt, comment="#", dtype=str)
     return(dataDF)
 
 
