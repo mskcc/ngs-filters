@@ -63,9 +63,6 @@ def tag_hotspots(args,mafDF,hotspotsDF):
     for i_index, i_row in mafDF.iterrows():
         m_chr = i_row.loc['Chromosome']
         m_start = i_row.loc['Start_Position']
-        m_end = i_row.loc['End_Position']
-        m_type = i_row.loc['TYPE']
-        m_vt = i_row.loc['Variant_Type']
         m_ref = (str(i_row.loc['Reference_Allele'])).rstrip()
         m_alt = (str(i_row.loc['Tumor_Seq_Allele2'])).rstrip()
         mafDF_copy.set_value(i_index,"hotspot_whitelist","FALSE")
