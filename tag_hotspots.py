@@ -2,16 +2,12 @@
 '''
 @Description : This tool helps to tag hotspot events
 @Created :  05/10/2017
-@Updated : 05/10/2017
-@author : Ronak H Shah
+@Updated : 10/06/2017
+@author : Ronak H Shah, Cyriac Kandoth
 
 '''
 from __future__ import division
-import argparse
-import sys
-import os
-import time
-import logging
+import argparse, sys, os, time, logging, csv, re
 
 logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -24,79 +20,46 @@ try:
 except ImportError:
     logger.warning("tag_hotspots: coloredlogs is not installed, please install it if you wish to see color in logs on standard out.")
     pass
-try:
-    import pandas as pd
-except ImportError:
-    logger.fatal("tag_hotspots: pandas is not installed, please install pandas as it is required to run the process.")
-    sys.exit(1)
 
 def main():
-   parser = argparse.ArgumentParser(prog='tag_hotspots.py', description=' This tool helps to tag hotspot events', usage='%(prog)s [options]')
-   parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="make lots of noise")
-   parser.add_argument("-m", "--input-maf", action="store", dest="inputMaf", required=True, type=str, metavar='SomeID.maf', help="Input maf file which needs to be tagged")
-   parser.add_argument("-itxt", "--input-hotspot", action="store", dest="inputTxt", required=True, type=str, metavar='SomeID.txt', help="Input txt file which has hotspots")
-   parser.add_argument("-o","--output-maf", action="store", dest="outputMaf", required=True, type=str, metavar='SomeID.maf', help="Output maf file name")
-   parser.add_argument("-outdir", "--outDir", action="store", dest="outdir", required=False, type=str, metavar='/somepath/output', help="Full Path to the output dir.")
-   
-   args = parser.parse_args()
-   if(args.verbose):
-       logger.info("tag_hotspots: Started the run for tagging hotspots")
-   (mafDF) =read_maf(args)
-   (hotspotDF) =read_hotspots(args)
-   (taggedDF) = tag_hotspots(args, mafDF, hotspotDF)
-   write_output(args,taggedDF)
-   if(args.verbose):
-       logger.info("tag_hotspots: Finished the run for tagging hotspots.")
+    parser = argparse.ArgumentParser(prog='tag_hotspots.py', description=' This tool helps to tag hotspot events', usage='%(prog)s [options]')
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", help="make lots of noise")
+    parser.add_argument("-m", "--input-maf", action="store", dest="inputMaf", required=True, type=str, metavar='SomeID.maf', help="Input maf file which needs to be tagged")
+    parser.add_argument("-itxt", "--input-hotspot", action="store", dest="inputTxt", required=True, type=str, metavar='SomeID.txt', help="Input txt file which has hotspots")
+    parser.add_argument("-o","--output-maf", action="store", dest="outputMaf", required=True, type=str, metavar='SomeID.maf', help="Output maf file name")
+    parser.add_argument("-outdir", "--outDir", action="store", dest="outdir", required=False, type=str, metavar='/somepath/output', help="Full Path to the output dir.")
 
-def read_maf(args):
-    dataDF = pd.read_table(args.inputMaf, comment="#", dtype=str)
-    return(dataDF)
+    args = parser.parse_args()
+    if(args.verbose):
+        logger.info("tag_hotspots: Started the run for tagging hotspots")
 
-def read_hotspots(args):
-    dataDF = pd.read_table(args.inputTxt, comment="#", dtype=str)
-    return(dataDF)
+    # Load hotspots into a dict for easy lookup by chr:pos:ref:alt, and store AA position changed
+    hotspot = dict()
+    with open(args.inputTxt, 'rb') as infile:
+        reader = csv.DictReader(infile, delimiter='\t')
+        for row in reader:
+            key = ':'.join([row['Chromosome'], row['Start_Position'], row['Reference_Allele'], row['Tumor_Seq_Allele2']])
+            # Extract the amino-acid position from the HGVSp code, to store in the dict
+            aa_pos = re.match( r'^p\.\D+(\d+)', row['HGVSp_Short'])
+            if aa_pos:
+                hotspot[key] = aa_pos.group(1)
 
+    # Parse through input MAF, and create a new one with an extra column tagging hotspots
+    with open(args.inputMaf, 'rb') as infile, open(args.outputMaf, 'wb') as outfile:
+        # ::NOTE:: Comment lines are tossed, though they may need to be retained in some use cases
+        reader = csv.DictReader((row for row in infile if not row.startswith('#')), delimiter='\t')
+        writer = csv.DictWriter(outfile, delimiter='\t', lineterminator='\n', fieldnames=reader.fieldnames+["hotspot_whitelist"])
+        writer.writeheader()
+        for row in reader:
+            row['hotspot_whitelist'] = "FALSE"
+            key = ':'.join([row['Chromosome'], row['Start_Position'], row['Reference_Allele'], row['Tumor_Seq_Allele2']])
+            if key in hotspot:
+                row['hotspot_whitelist'] = "TRUE"
+            writer.writerow(row)
 
-def tag_hotspots(args,mafDF,hotspotsDF):
-    mafDF_copy = mafDF.copy()
-    mafDF_copy["hotspot_whitelist"] = None
-    for i_index, i_row in mafDF.iterrows():
-        m_chr = i_row.loc['Chromosome']
-        m_start = i_row.loc['Start_Position']
-        m_ref = (str(i_row.loc['Reference_Allele'])).rstrip()
-        m_alt = (str(i_row.loc['Tumor_Seq_Allele2'])).rstrip()
-        mafDF_copy.set_value(i_index,"hotspot_whitelist","FALSE")
-        is_SNV = False
-        if(len(m_ref) == len(m_alt)):
-            is_SNV = True
-        m_hgvs_p_short = (str(i_row.loc['HGVSp_Short'])).rstrip()
-        hotspot_subDF = hotspotsDF.loc[hotspotsDF['Chromosome'] == m_chr]
-        for j_index,j_row in hotspot_subDF.iterrows():
-            j_chr = j_row.loc['Chromosome']
-            j_start = j_row.loc['Start_Position']
-            j_end = j_row.loc['End_Position']
-            j_hgvs_p_short = (str(i_row.loc['HGVSp_Short'])).rstrip()
-            if(is_SNV):
-                if(j_start == m_start and j_hgvs_p_short == m_hgvs_p_short):
-                    mafDF_copy.set_value(i_index,"hotspot_whitelist","TRUE")
-                    break
-                else:
-                    continue
-            else:
-                if(j_start == m_start):
-                    mafDF_copy.set_value(i_index,"hotspot_whitelist","TRUE")
-                    break
-                else:
-                    continue
-    return(mafDF_copy)
+    if(args.verbose):
+        logger.info("tag_hotspots: Finished the run for tagging hotspots.")
 
-def write_output(args,output_DF):
-    if(args.outdir):
-        outFile = os.path.join(args.outdir,args.outputMaf)
-    else:
-        outFile = os.path.join(os.getcwd(),args.outputMaf)
-    output_DF.to_csv(outFile, sep='\t', index=False)
-    
 if __name__ == "__main__":
     start_time = time.time()  
     main()
