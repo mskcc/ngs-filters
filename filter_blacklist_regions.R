@@ -24,13 +24,8 @@ annotate_maf <- function(maf, blacklist, rmsk) {
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
     maf.annotated <- maf[, blacklist_region := blacklist_overlap$Info]
     maf.annotated <- maf[, repeat_masker := rmsk_overlap$Info]
-    maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & !is.na(blacklist_region), 'blacklist_region',
-                                          ifelse(FILTER != '.' & !is.na(blacklist_region),
-                                                 paste0(FILTER, ',blacklist_region'), FILTER))]
-    maf.annotated <- maf[, FILTER := ifelse(FILTER == '.' & !is.na(repeat_masker), 'repeat_masker',
-                                            ifelse(FILTER != '.' & !is.na(repeat_masker),
-                                                   paste0(FILTER, ',repeat_masker'), FILTER))]
-
+    maf.annotated <- maf[, FILTER := ifelse(!is.na(blacklist_region), ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS'), 'blacklist_region', paste0(FILTER, ';blacklist_region')), FILTER)]
+    maf.annotated <- maf[, FILTER := ifelse(!is.na(repeat_masker), ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS'), 'repeat_masker', paste0(FILTER, ';repeat_masker')), FILTER)]
     return(maf.annotated)
 }
 
