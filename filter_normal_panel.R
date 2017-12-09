@@ -67,6 +67,11 @@ if( ! interactive() ) {
   args=parser$parse_args()
 
   maf <- suppressWarnings(fread(args$maf, showProgress = F))
+  #
+  # Cast maf$Chromosome to character for cases where the MAF only has events on 1-22
+  #
+  maf$Chromosome=as.character(maf$Chromosome)
+
   fillout <- suppressWarnings(fread(args$fillout, showProgress = F))
   alt.reads <- args$normals
   outfile <- args$outfile

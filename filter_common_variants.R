@@ -61,6 +61,11 @@ if( ! interactive() ) {
 
     if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin', showProgress = F))
     } else { maf <- suppressWarnings(fread(args$maf, showProgress = F)) }
+    #
+    # Cast maf$Chromosome to character for cases where the MAF only has events on 1-22
+    #
+    maf$Chromosome=as.character(maf$Chromosome)
+
 
     ### Check if user provided a tagged MAF, else if there's already an ExAC_AF column in MAF
     if (!is.null(args$flagged)) {
