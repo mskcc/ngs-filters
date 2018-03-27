@@ -31,36 +31,44 @@ annotate_maf <- function(maf, blacklist, rmsk) {
 
 if (!interactive()) {
 
-  pkgs = c('data.table', 'argparse', 'kimisc')
-  junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
-  rm(junk)
-
-  args = commandArgs(trailingOnly = FALSE)
-  path = dirname(thisfile())
-  #path = dirname(stringr::str_replace((args[4]), '--file=', ''))
-
-  parser=ArgumentParser()
-  parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
-  parser$add_argument('-b', '--blacklist', type='character', help='DAC Blacklisted Regions',
-                      default = paste0(path, '/data/', 'wgEncodeDacMapabilityConsensusExcludable.bed'))
-  parser$add_argument('-r', '--repeatmasker', type='character', help='Modified RepeatMasker file',
-                      default = paste0(path, '/data/', 'rmsk_mod.bed'))
-  parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
-  args=parser$parse_args()
-
-  if (args$maf == 'stdin') { maf = suppressWarnings(fread('cat /dev/stdin',  colClasses=c(Chromosome="character"), showProgress = F))
-  } else { maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F)) }
-  blacklist <- suppressWarnings(fread(args$blacklist, showProgress = F))
-  rmsk <- suppressWarnings(fread(args$repeatmasker, showProgress = F))
-  outfile <- args$outfile
-
-  blacklist[, c('V5', 'V6') := NULL]
-  setnames(blacklist, c("Chromosome", "Start_Position", "End_Position", "Info"))
-  blacklist[, Chromosome := gsub("chr", "", Chromosome)]
-  setnames(rmsk, c("Chromosome", "Start_Position", "End_Position", "Info"))
-  rmsk[, Chromosome := gsub("chr", "", Chromosome)]
-
-  maf.out <- annotate_maf(maf, blacklist, rmsk)
-  if (outfile == 'stdout') { write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
-  } else { write.table(maf.out, outfile, na="", sep = "\t", col.names = T, row.names = F, quote = F) }
+    pkgs = c('data.table', 'argparse', 'kimisc')
+    junk <- lapply(pkgs, function(p){suppressPackageStartupMessages(require(p, character.only = T))})
+    rm(junk)
+  
+    args = commandArgs(trailingOnly = FALSE)
+    path = dirname(thisfile())
+    #path = dirname(stringr::str_replace((args[4]), '--file=', ''))
+  
+    parser=ArgumentParser()
+    parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
+    parser$add_argument('-b', '--blacklist', type='character', help='DAC Blacklisted Regions',
+                        default = paste0(path, '/data/', 'wgEncodeDacMapabilityConsensusExcludable.bed'))
+    parser$add_argument('-r', '--repeatmasker', type='character', help='Modified RepeatMasker file',
+                        default = paste0(path, '/data/', 'rmsk_mod.bed'))
+    parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
+    args=parser$parse_args()
+  
+    if (args$maf == 'stdin') {
+        maf = suppressWarnings(fread('cat /dev/stdin',  colClasses=c(Chromosome="character"), showProgress = F))
+    }
+    else {
+        maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F))
+    }
+    blacklist <- suppressWarnings(fread(args$blacklist, showProgress = F))
+    rmsk <- suppressWarnings(fread(args$repeatmasker, showProgress = F))
+    outfile <- args$outfile
+  
+    blacklist[, c('V5', 'V6') := NULL]
+    setnames(blacklist, c("Chromosome", "Start_Position", "End_Position", "Info"))
+    blacklist[, Chromosome := gsub("chr", "", Chromosome)]
+    setnames(rmsk, c("Chromosome", "Start_Position", "End_Position", "Info"))
+    rmsk[, Chromosome := gsub("chr", "", Chromosome)]
+  
+    maf.out <- annotate_maf(maf, blacklist, rmsk)
+    if (outfile == 'stdout') {
+        write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
+    }
+    else {
+        write.table(maf.out, outfile, na="", sep = "\t", col.names = T, row.names = F, quote = F)
+    }
 }
