@@ -1,8 +1,8 @@
 '''
-@Description : This tool helps to test remove_varinats
+@Description : This tool helps test ngs-filters
 @Created :  06/01/2017
-@Updated : 06/01/2017
-@author : Ronak H Shah
+@Updated : 03/27/2018
+@author : Ronak H Shah, Cyriac Kandoth
 
 '''
 
@@ -21,12 +21,10 @@ this_dir = "/".join(this_dir.split("/")[0:-2])
 def setup_module(): 
     inputFileMaf = os.path.join(this_dir, "data", "sample_input.maf")
     outFileMaf = os.path.join(new_dir, "sample_output.maf")
-    cmpFileMaf = os.path.join(this_dir, "data", "sample_output.maf")
     hotspotFile = os.path.join(this_dir, "data", "hotspot-list-union-v1-v2.txt")
-    NoramlPanelFill = os.path.join(this_dir, "data", "sample_input_fill.maf")
-    FFPEFill = os.path.join(this_dir, "data", "sample_input_FFPE.maf")
+    NormalPanelFill = os.path.join(this_dir, "data", "sample_input_fill.maf")
     scriptFile = os.path.join(this_dir, "run_ngs-filters.py")
-    cmd = "python " + scriptFile + " -v -m " + inputFileMaf + " -o " + outFileMaf + " -npmaf " + NoramlPanelFill + " -fpmaf " + FFPEFill + " -hsp " + hotspotFile
+    cmd = "python " + scriptFile + " -v -m " + inputFileMaf + " -o " + outFileMaf + " -npmaf " + NormalPanelFill + " -hsp " + hotspotFile
     args = shlex.split(cmd)
     if(os.path.isfile(outFileMaf)):
         os.remove(outFileMaf)

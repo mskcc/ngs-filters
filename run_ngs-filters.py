@@ -86,42 +86,20 @@ def run_wes_filters(args):
     subprocess.call(cmd, shell = True)
     os.remove(tempMaf0)
 
-    #filter_low_conf
+    #filter_dmp
     if(args.verbose):
-        logger.info("run_ngs-filters: Applying filter_low_conf")
-    cmd =  apply_filter + " " + os.path.join(wes_filter_bin, "filter_low_conf.R") + " " + tempMaf1  + " " + tempMaf0
+        logger.info("run_ngs-filters: Applying filter_dmp")
+    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_dmp.R") + " " + tempMaf1  + " " + tempMaf0
     if(args.verbose):
         logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
     os.remove(tempMaf1)
 
-    #filter_dmp
-    if(args.verbose):
-        logger.info("run_ngs-filters: Applying filter_dmp")
-    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_dmp.R") + " " + tempMaf0  + " " + tempMaf1
-    if(args.verbose):
-        logger.info("run_ngs-filters: Running, %s",cmd)
-    subprocess.call(cmd, shell = True)
-    os.remove(tempMaf0)
-
     #filter_normal_panel
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_ngs-filters: Applying filter_normal_panel")
-        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf1  + " " + tempMaf0 + " -f " + args.NormalPanelMaf + " -fo 1"
-        if(args.verbose):
-            logger.info("run_ngs-filters: Running, %s",cmd)
-        subprocess.call(cmd, shell = True)
-        os.remove(tempMaf1)
-    else:
-        # In case this filter was skipped, swap around the input/output MAFs
-        tempMaf0, tempMaf1 = tempMaf1, tempMaf0
-
-    #filter_cohort_normals
-    if(args.NormalCohortMaf):
-        if(args.verbose):
-            logger.info("run_ngs-filters: Applying filter_cohort_normals")
-        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf0  + " " + tempMaf1 + " -f " + args.NormalCohortMaf + " -N " + args.NormalCohortSamples
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf0  + " " + tempMaf1 + " -f " + args.NormalPanelMaf + " -fo 1"
         if(args.verbose):
             logger.info("run_ngs-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)
@@ -130,10 +108,23 @@ def run_wes_filters(args):
         # In case this filter was skipped, swap around the input/output MAFs
         tempMaf0, tempMaf1 = tempMaf1, tempMaf0
 
+    #filter_cohort_normals
+    if(args.NormalCohortMaf):
+        if(args.verbose):
+            logger.info("run_ngs-filters: Applying filter_cohort_normals")
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_cohort_normals.R") + " " + tempMaf1  + " " + tempMaf0 + " -f " + args.NormalCohortMaf + " -N " + args.NormalCohortSamples
+        if(args.verbose):
+            logger.info("run_ngs-filters: Running, %s",cmd)
+        subprocess.call(cmd, shell = True)
+        os.remove(tempMaf1)
+    else:
+        # In case this filter was skipped, swap around the input/output MAFs
+        tempMaf0, tempMaf1 = tempMaf1, tempMaf0
+
     # Move final MAF to user-defined final output location
     if(args.verbose):
         logger.info("run_ngs-filters: Moving output-maf and cleaning temp directory")
-    shutil.move(tempMaf1, args.outputMaf)
+    shutil.move(tempMaf0, args.outputMaf)
     shutil.rmtree(tmpdir)
     return(args.outputMaf)
 
