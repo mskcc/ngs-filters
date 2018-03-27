@@ -31,10 +31,7 @@ The first lines of the output MAF will look as follows:
 This script currently runs the following scripts in given order using *applyFilter.sh*:
 - tag_hotspots
 - filter_blacklist_region
-- filter_low_conf
-- filter_ffpe
 - filter_dmp
-- filter_ffpe_pool (if fillout maf for ffpe sample is given)
 - filter_normal_panel (if fillout maf for standard normal sample is given)
 - filter_cohort_normal (if fillout maf for cohort normal sample is given)
 
@@ -55,20 +52,18 @@ optional arguments:
                         Full Path to the output dir.
   -npmaf /somepath/to/normalpanel.maf, --normal-panel-maf /somepath/to/normalpanel.maf
                         Path to fillout maf file of panel of standard normals
-  -fpmaf /somepath/to/ffpe_pool.maf, --ffpe_pool_maf /somepath/to/ffpe_pool.maf
-                        Path to fillout maf file for FFPE artifacts
   -ncmaf /somepath/to/normalcohort.maf, --normal-cohort-maf /somepath/to/normalcohort.maf
                         Path to fillout maf file of cohort normals
   -nsf /somepath/to/normalcohort.list, --normalSamplesFile /somepath/to/normalcohort.list
                         File with list of normal samples
-  -hsp SomeID.txt, --input-hotspot SomeID.txt
+  -hsp hotspots.txt, --input-hotspot hotspots.txt
                         Input txt file which has hotspots
-                        
+
 ```
 
 example:
 ```
-python /home/shahr2/git/ngs-filters/run_wes-filters.py -m output.maf -o output_wes.maf -npmaf /ifs/work/prism/shahr2/cmo_fill/output_fill.maf -f/ifs/work/prism/shahr2/cmo_fill/output_FFPE.maf -hsp /home/shahr2/git/hotspot-whitelist/v2/hotspot-list-union-v1-v2.txt -v
+python run_ngs-filters.py --verbose --input-maf data/sample_input.maf --output-maf sample_output.maf --normal-panel-maf data/sample_input_fill.maf --input-hotspot data/hotspot-list-union-v1-v2.txt
 ```
 
 ## Filters

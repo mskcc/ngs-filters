@@ -14,12 +14,6 @@ logging.basicConfig(
         datefmt='%m/%d/%Y %I:%M:%S %p',
         level=logging.DEBUG)
 logger = logging.getLogger('tag_hotspots')
-try:
-    import coloredlogs
-    coloredlogs.install(level='DEBUG')
-except ImportError:
-    logger.warning("tag_hotspots: coloredlogs is not installed, please install it if you wish to see color in logs on standard out.")
-    pass
 
 def main():
     parser = argparse.ArgumentParser(prog='tag_hotspots.py', description=' This tool helps to tag hotspot events', usage='%(prog)s [options]')
