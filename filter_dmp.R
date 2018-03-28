@@ -17,8 +17,8 @@ annotate_maf <- function(maf) {
     }
 
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
-    maf.annotated <- maf[, dmp_filter := ifelse(hotspot_whitelist == TRUE & as.numeric(t_depth) >= 20 & as.numeric(t_alt_count) >= 3 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.02, FALSE,
-                        ifelse(hotspot_whitelist == FALSE & as.numeric(t_depth) >= 20 & as.numeric(t_alt_count) >= 5 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.05, FALSE, TRUE))]
+    maf.annotated <- maf[, dmp_filter := ifelse(hotspot_whitelist == TRUE & as.numeric(t_depth) >= 12 & as.numeric(t_alt_count) >= 3 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.02, FALSE,
+                        ifelse(hotspot_whitelist == FALSE & as.numeric(t_depth) >= 20 & as.numeric(t_alt_count) >= 5 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.04, FALSE, TRUE))]
     maf.annotated <- maf[, FILTER := ifelse(dmp_filter == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS'), 'dmp_filter', paste0(FILTER, ';dmp_filter')), FILTER)]
     return(maf.annotated)
 }
