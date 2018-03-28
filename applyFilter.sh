@@ -5,15 +5,15 @@ SDIR="$( cd "$( dirname "$0" )" && pwd )"
 if [ -x "$(command -v git)" ] && [ -r "$SDIR/.git" ]
 then
     # if both Git CLI and .git exist, then use "git describe" to create version tag
-    SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --always --long)
+    SVERSION=$(git --git-dir=$SDIR/.git --work-tree=$SDIR describe --tags)
 else
     if [ -r "${SDIR}/.git-commit-hash" ]
     then
         # if .git-commit-hash exists, then use the git commit hash stored in .git-commit-hash
         SVERSION=$(cat ${SDIR}/.git-commit-hash)
     else
-        # there is no way to figure out git commit hash
-        SVERSION="unknown"
+        # if we can't figure it out, use a hardcoded version number that we need to keep updated
+        SVERSION="v1.2.1"
     fi
 fi
 
