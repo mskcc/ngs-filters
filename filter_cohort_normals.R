@@ -37,7 +37,7 @@ annotate_maf <- function(maf, fillout, normal.samples, alt.reads = 3) {
   if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
   fillout.blacklist <- unique(fillout$TAG)
   maf.annotated <- maf[, cohort_normal := TAG %in% fillout.blacklist]
-  maf.annotated <- maf[, FILTER := ifelse(cohort_normal == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS'), 'cohort_normal', paste0(FILTER, ';cohort_normal')), FILTER)]
+  maf.annotated <- maf[, FILTER := ifelse(cohort_normal == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS' | is.na(FILTER)), 'cohort_normal', paste0(FILTER, ';cohort_normal')), FILTER)]
   return(maf.annotated)
 
 }
