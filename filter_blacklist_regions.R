@@ -65,6 +65,8 @@ if (!interactive()) {
     rmsk[, Chromosome := gsub("chr", "", Chromosome)]
   
     maf.out <- annotate_maf(maf, blacklist, rmsk)
+    maf.out$blacklist_region <- NULL
+    maf.out$repeat_masker <- NULL
     if (outfile == 'stdout') {
         write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
     }

@@ -7,13 +7,24 @@
 ##########################################################################################
 
 annotate_maf_dmp <- function(maf, fillout, normal.count) {
+ #add
+    maf[, tmp_id := stringr::str_c('chr', Chromosome,
+                ':', Start_Position,
+                '-', End_Position,
+                ':', Reference_Allele,
+                ':', Tumor_Seq_Allele1,
+                ':', Tumor_Sample_Barcode)]
 
-    fillout <- fillout[fillout$threshold > normal.count,]
+    maf <- merge(maf,fillout, by='tmp_id')
+
+    fillout <- fillout[fillout$normal_panel_occurrences > normal.count,]
 
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
     normal_panel.blacklist <- unique(fillout$tmp_id)
     maf.annotated <- maf[, normal_panel := tmp_id %in% normal_panel.blacklist]
-    maf.annotated <- maf[, FILTER := ifelse(normal_panel == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS' | is.na(FILTER) ), 'normal_panel', paste0(FILTER, ';normal_panel')), FILTER)]
+
+    maf.annotated <- maf[, FILTER := ifelse(normal_panel == TRUE & hotspot_whitelist == FALSE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS' | is.na(FILTER) ), 'normal_panel', paste0(FILTER, ';normal_panel')), FILTER)]
+    
     return(maf.annotated)
 }
 
@@ -94,9 +105,9 @@ parse_fillout_maf <- function(maf, fillout, chosen.proportion) {
     normpanel<-select(fillout,TAG,t_variant_frequency,t_alt_count)
     normpanel <- normpanel[normpanel$t_alt_count >= 3,]
     fulljoin.maf<-full_join(maf.shortlist,normpanel,by='TAG')
-    fulljoin.maf$threshold <- fulljoin.maf$t_variant_frequency > fulljoin.maf$tpvf
+    fulljoin.maf$normal_panel_occurrences <- fulljoin.maf$t_variant_frequency > fulljoin.maf$tpvf
     
-    return(group_by(fulljoin.maf,tmp_id) %>% summarize(threshold=sum(threshold)))
+    return(group_by(fulljoin.maf,tmp_id) %>% summarize(normal_panel_occurrences=sum(normal_panel_occurrences)))
 }
 
 if( ! interactive() ) {
@@ -130,6 +141,9 @@ if( ! interactive() ) {
         parsed_fillout = parse_fillout_maf(maf,fillout,chosen.proportion)
         maf.out <- annotate_maf_dmp(maf, parsed_fillout, normal.count)
     }
+    maf.out$normal_panel <- NULL
+    maf.out$TAG<- NULL
+    maf.out$tmp_id<- NULL
     if (outfile == 'stdout') {
         write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
     }
