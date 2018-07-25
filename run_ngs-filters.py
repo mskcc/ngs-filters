@@ -93,7 +93,7 @@ def run_wes_filters(args):
     if(args.NormalPanelMaf):
         if(args.verbose):
             logger.info("run_ngs-filters: Applying filter_normal_panel")
-        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf0  + " " + tempMaf1 + " -f " + args.NormalPanelMaf + " -fo 1 " + "-c 10" 
+        cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_normal_panel.R") + " " + tempMaf0  + " " + tempMaf1 + " -f " + args.NormalPanelMaf + " -fo 1 "
         if(args.verbose):
             logger.info("run_ngs-filters: Running, %s",cmd)
         subprocess.call(cmd, shell = True)

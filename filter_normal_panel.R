@@ -120,7 +120,7 @@ if( ! interactive() ) {
     parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
     parser$add_argument('-f', '--fillout', type='character', help='GetBaseCountsMultiSample output')
     parser$add_argument('-fo', '--fillout_format', type='double', help='GetBaseCountsMultiSample output format. MAF(1), Tab-delimited with VCF coordinates (2:default)', default=2)
-    parser$add_argument('-n', '--normal_count', type='double', default=8, help='Minimum number of normal panel samples with 3+ supporting reads (number of occurrences to allow)')
+    parser$add_argument('-n', '--normal_count', type='double', default=5, help='Minimum number of normal panel samples with 3+ supporting reads (number of occurrences to allow)')
     parser$add_argument('-c', '--chosen_proportion', type='double', default=10, help='Number used to calculate TPVF')
     parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
     args=parser$parse_args()
