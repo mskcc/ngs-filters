@@ -1,13 +1,12 @@
 #!/usr/bin/env Rscript
 
 ##########################################################################################
-# MSKCC CMO
-# Identify variants with at least 3 reads of support in at least 5 (default) samples in a
-# panel of curated normals, and annotate these calls with FILTER tag "normal_panel"
+# Identify somatic variants in a MAF with sufficient support in a panel of curated normals
+# and tag them with FILTER "normal_panel" in an output MAF
 ##########################################################################################
 
-annotate_maf_dmp <- function(maf, fillout, normal.count) {
- #add
+annotate_maf <- function(maf, fillout, normal.count) {
+
     maf[, tmp_id := stringr::str_c('chr', Chromosome,
                 ':', Start_Position,
                 '-', End_Position,
@@ -22,34 +21,12 @@ annotate_maf_dmp <- function(maf, fillout, normal.count) {
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
     normal_panel.blacklist <- unique(fillout$tmp_id)
     maf.annotated <- maf[, normal_panel := tmp_id %in% normal_panel.blacklist]
-
     maf.annotated <- maf[, FILTER := ifelse(normal_panel == TRUE & hotspot_whitelist == FALSE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS' | is.na(FILTER) ), 'normal_panel', paste0(FILTER, ';normal_panel')), FILTER)]
-    
+
     return(maf.annotated)
 }
 
-annotate_maf <- function(maf, fillout, normal.count) {
-
-    # Subset to loci with read support in at least 5 samples in the normal panel
-    fillout <- fillout[fillout$normal_count >= normal.count,]
-
-    # Add TAG to MAF
-    if (!('TAG' %in% names(maf))) {
-        maf[, TAG := stringr::str_c('chr', Chromosome,
-                        ':', Start_Position,
-                        '-', End_Position,
-                        ':', Reference_Allele,
-                        ':', Tumor_Seq_Allele2)]
-    }
-
-    if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
-    normal_panel.blacklist <- unique(fillout$TAG)
-    maf.annotated <- maf[, normal_panel := TAG %in% normal_panel.blacklist]
-    maf.annotated <- maf[, FILTER := ifelse(normal_panel == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS'), 'normal_panel', paste0(FILTER, ';normal_panel')), FILTER)]
-    return(maf.annotated)
-}
-
-parse_fillout <- function(fillout) {
+parse_fillout_vcf <- function(fillout) {
 
     # Convert GetBaseCountsMultiSample output
     fillout = melt(fillout, id.vars = colnames(fillout)[1:34], variable.name = 'Tumor_Sample_Barcode') %>%
@@ -69,8 +46,8 @@ parse_fillout <- function(fillout) {
     return(group_by(fillout, TAG) %>% summarize(normal_count = sum(n_alt_count>=3)))
 }
 
-parse_fillout_maf <- function(maf, fillout, chosen.proportion) {
-    # index
+parse_fillout_maf <- function(maf, fillout, chosen.proportion, min_tpvf) {
+
     fillout[, TAG := stringr::str_c('chr', Chromosome,
                     ':', Start_Position,
                     '-', End_Position,
@@ -85,7 +62,7 @@ parse_fillout_maf <- function(maf, fillout, chosen.proportion) {
     fillout = fillout[!duplicated(fillout$tmp_id),]
 
     if (!('TAG' %in% names(maf))) {
-        maf[, TAG := stringr::str_c('chr', Chromosome,
+    maf[, TAG := stringr::str_c('chr', Chromosome,
                         ':', Start_Position,
                         '-', End_Position,
                         ':', Reference_Allele,
@@ -97,16 +74,19 @@ parse_fillout_maf <- function(maf, fillout, chosen.proportion) {
                     ':', Reference_Allele,
                     ':', Tumor_Seq_Allele1,
                     ':', Tumor_Sample_Barcode)]
-    # Calculate frequencies and return
+
+    # Calculate tumor VAF and from that the required TPVF
     maf$vaf <- maf$t_alt_count / maf$t_depth
     maf$tpvf <- maf$vaf / chosen.proportion
+    maf$tpvf[maf$tpvf < min_tpvf] <- min_tpvf
     maf.shortlist<-select(maf,TAG,tmp_id,tpvf)
 
+    # Compare each normal panel VAF to the TPVF and count occurrences
     normpanel<-select(fillout,TAG,t_variant_frequency,t_alt_count)
     normpanel <- normpanel[normpanel$t_alt_count >= 3,]
     fulljoin.maf<-full_join(maf.shortlist,normpanel,by='TAG')
     fulljoin.maf$normal_panel_occurrences <- fulljoin.maf$t_variant_frequency > fulljoin.maf$tpvf
-    
+
     return(group_by(fulljoin.maf,tmp_id) %>% summarize(normal_panel_occurrences=sum(normal_panel_occurrences)))
 }
 
@@ -117,12 +97,13 @@ if( ! interactive() ) {
     rm(junk)
 
     parser=ArgumentParser()
-    parser$add_argument('-m', '--maf', type='character', help='SOMATIC_FACETS.vep.maf file', default = 'stdin')
-    parser$add_argument('-f', '--fillout', type='character', help='GetBaseCountsMultiSample output')
-    parser$add_argument('-fo', '--fillout_format', type='double', help='GetBaseCountsMultiSample output format. MAF(1), Tab-delimited with VCF coordinates (2:default)', default=2)
-    parser$add_argument('-n', '--normal_count', type='double', default=5, help='Minimum number of normal panel samples with 3+ supporting reads (number of occurrences to allow)')
-    parser$add_argument('-c', '--chosen_proportion', type='double', default=10, help='Number used to calculate TPVF')
-    parser$add_argument('-o', '--outfile', type='character', help='Output file', default = 'stdout')
+    parser$add_argument('-m', '--maf', type='character', default='stdin', help='MAF format file listing predicted somatic events')
+    parser$add_argument('-f', '--fillout', type='character', help='Output file generated by GetBaseCountsMultiSample for the same somatic events')
+    parser$add_argument('-fo', '--fillout_format', type='double', default=1, help='GetBaseCountsMultiSample output format. MAF-like (1) or VCF-like (2) (Default: 1)')
+    parser$add_argument('-c', '--chosen_proportion', type='double', default=10, help='Tumor VAF divided by this produces the tumor proportional variant fraction (TPVF) (Default: 10)')
+    parser$add_argument('-t', '--min_tpvf', type='double', default=0.01, help='Minimum TPVF that a normal VAF must exceed to be considered occurring in the normal (Default: 0.01)')
+    parser$add_argument('-n', '--normal_count', type='double', default=5, help='Minimum number of normal samples that must have 3+ reads and VAF>=TPVF (5)')
+    parser$add_argument('-o', '--outfile', type='character', default='stdout', help='Output file')
     args=parser$parse_args()
 
     maf <- suppressWarnings(fread(args$maf, colClasses=c(Chromosome="character"), showProgress = F))
@@ -130,17 +111,20 @@ if( ! interactive() ) {
     fillout.format<-args$fillout_format
     normal.count <- args$normal_count
     chosen.proportion <- args$chosen_proportion
+    min_tpvf <- args$min_tpvf
     outfile <- args$outfile
 
     if(fillout.format == 2) {
-        parsed_fillout = parse_fillout(fillout)
+        parsed_fillout = parse_fillout_vcf(fillout)
         maf.out <- annotate_maf(maf, parsed_fillout, normal.count)
 
     }
     else {
-        parsed_fillout = parse_fillout_maf(maf,fillout,chosen.proportion)
-        maf.out <- annotate_maf_dmp(maf, parsed_fillout, normal.count)
+        parsed_fillout = parse_fillout_maf(maf,fillout,chosen.proportion,min_tpvf)
+        maf.out <- annotate_maf(maf, parsed_fillout, normal.count)
     }
+
+    # Write the new tagged MAF in output, excluding a few unimportant columns
     maf.out$normal_panel <- NULL
     maf.out$TAG<- NULL
     maf.out$tmp_id<- NULL
