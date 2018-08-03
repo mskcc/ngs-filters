@@ -13,12 +13,12 @@ annotate_maf <- function(maf, blacklist, rmsk) {
 
     blacklist_overlap <- foverlaps(maf[, .(Chromosome, Start_Position, End_Position)],
                                    blacklist,
-                                   type = "any",
+                                   type = "within",
                                    mult = "first")
 
     rmsk_overlap <- foverlaps(maf[, .(Chromosome, Start_Position, End_Position)],
                               rmsk,
-                              type = "any",
+                              type = "within",
                               mult = "first")
 
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
