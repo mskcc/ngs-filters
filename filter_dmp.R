@@ -40,6 +40,7 @@ if (!interactive()) {
 
     maf.out <- annotate_maf(maf)
     maf.out$dmp_filter <- NULL
+    maf.out$TAG <- NULL
     if (outfile == 'stdout') { write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
     } else { write.table(maf.out, outfile, na="", sep = "\t", col.names = T, row.names = F, quote = F) }
 }
