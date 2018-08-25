@@ -32,7 +32,7 @@ else:
 
 ### Path to GetBaseCountsMultiSample
 #should be cmo.util.programs['GetBaseCountsMultiSample]['1.0.0'], but zeng hasn't packaged this for release yet
-gbcmPath = '/home/socci/Code/Zeng/GetBaseCountsMultiSample/GetBaseCountsMultiSample'
+gbcmPath = '/opt/common/CentOS_6-dev/getbasecountsmultisample/v1.2.2/GetBaseCountsMultiSample'
 
 ### Set genome path
 genomePath = cmo.util.genomes[args.genome]['fasta']
