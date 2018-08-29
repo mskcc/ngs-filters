@@ -2,7 +2,7 @@
 
 ##########################################################################################
 # MSKCC CMO
-# Annotate dmp_filter mutation calls
+# Annotate mutation calls with VAF and read-count based filters
 ##########################################################################################
 
 annotate_maf <- function(maf) {
@@ -17,9 +17,9 @@ annotate_maf <- function(maf) {
     }
 
     if (!('FILTER' %in% names(maf))) maf$FILTER = '.'
-    maf.annotated <- maf[, dmp_filter := ifelse(hotspot_whitelist == TRUE & as.numeric(t_depth) >= 12 & as.numeric(n_depth) >= 6 & as.numeric(t_alt_count) >= 3 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.02, FALSE,
-                        ifelse(hotspot_whitelist == FALSE & as.numeric(t_depth) >= 20 & as.numeric(n_depth) >= 10 & as.numeric(t_alt_count) >= 5 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.05, FALSE, TRUE))]
-    maf.annotated <- maf[, FILTER := ifelse(dmp_filter == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS' | is.na(FILTER)), 'dmp_filter', paste0(FILTER, ';dmp_filter')), FILTER)]
+    maf.annotated <- maf[, vaf_filter := ifelse(hotspot_whitelist == TRUE & as.numeric(t_depth) >= 12 & as.numeric(n_depth) >= 6 & as.numeric(t_alt_count) >= 3 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.02, FALSE,
+                        ifelse(hotspot_whitelist == FALSE & as.numeric(t_depth) >= 20 & as.numeric(n_depth) >= 10 & as.numeric(t_alt_count) >= 5 & as.numeric(n_alt_count) <= 2 & as.numeric(t_alt_count)/as.numeric(t_depth) >= 0.05, FALSE, TRUE))]
+    maf.annotated <- maf[, FILTER := ifelse(vaf_filter == TRUE, ifelse((FILTER == '' | FILTER == '.' | FILTER == 'PASS' | is.na(FILTER)), 'vaf_filter', paste0(FILTER, ';vaf_filter')), FILTER)]
     return(maf.annotated)
 }
 
@@ -39,7 +39,7 @@ if (!interactive()) {
     outfile <- args$outfile
 
     maf.out <- annotate_maf(maf)
-    maf.out$dmp_filter <- NULL
+    maf.out$vaf_filter <- NULL
     maf.out$TAG <- NULL
     if (outfile == 'stdout') { write.table(maf.out, stdout(), na="", sep = "\t", col.names = T, row.names = F, quote = F)
     } else { write.table(maf.out, outfile, na="", sep = "\t", col.names = T, row.names = F, quote = F) }

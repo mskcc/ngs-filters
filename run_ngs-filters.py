@@ -80,10 +80,10 @@ def run_wes_filters(args):
     subprocess.call(cmd, shell = True)
     os.remove(tempMaf0)
 
-    #filter_dmp
+    #filter_vaf
     if(args.verbose):
-        logger.info("run_ngs-filters: Applying filter_dmp")
-    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_dmp.R") + " " + tempMaf1  + " " + tempMaf0
+        logger.info("run_ngs-filters: Applying filter_vaf")
+    cmd =  apply_filter + " " + os.path.join(wes_filter_bin,"filter_vaf.R") + " " + tempMaf1  + " " + tempMaf0
     if(args.verbose):
         logger.info("run_ngs-filters: Running, %s",cmd)
     subprocess.call(cmd, shell = True)
