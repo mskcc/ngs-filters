@@ -40,12 +40,6 @@ def main():
     else:
         args.inputHSP = os.path.join(this_dir,"data","hotspot-list-union-v1-v2.txt")
 
-    # Create a TMPDIR at /scratch/<username>, if it doesn't already exist
-    tmp_root = "/scratch/" + getpass.getuser()
-    if not os.path.exists(tmp_root):
-        os.makedirs(tmp_root)
-    os.environ["TMPDIR"] = tmp_root
-
     if(args.verbose):
         logger.info("run_ngs-filters: Started the run for wes-filters")
     (finalmaf) = run_wes_filters(args)
