@@ -86,8 +86,10 @@ parse_fillout_maf <- function(maf, fillout, chosen.proportion, min_tpvf) {
     normpanel <- normpanel[normpanel$t_alt_count >= 1,]
     fulljoin.maf<-full_join(maf.shortlist,normpanel,by='TAG')
     fulljoin.maf$normal_panel_occurrences <- fulljoin.maf$t_variant_frequency >= fulljoin.maf$tpvf
-
-    return(group_by(fulljoin.maf,tmp_id) %>% summarize(normal_panel_occurrences=sum(normal_panel_occurrences)))
+    normalpanel_df <- group_by(fulljoin.maf,tmp_id) %>% summarize(normal_panel_occurrences=sum(normal_panel_occurrences),normal_panel_mean_alt_count=mean(t_alt_count))
+    normalpanel_df[is.na(normalpanel_df)] <- 0
+    normalpanel_df$normal_panel_mean_alt_count <- round(normalpanel_df$normal_panel_mean_alt_count)
+    return(normalpanel_df)
 }
 
 if( ! interactive() ) {
