@@ -51,15 +51,22 @@ def main():
             if key in hotspot:
                 row['hotspot_whitelist'] = "TRUE"
 
-            if 'fillout_n_alt' in header: #Start tagging nad3
-                try:
-                    if int(row['fillout_n_alt']) > 3:
+            else: #Non hotspots
+                if 'fillout_n_alt' in header: #Start tagging nad3
+                    try:
+                        if int(row['fillout_n_alt']) > 3:
+                            if row['FILTER'] == 'PASS' or row['FILTER'] == '':
+                                row['FILTER'] = 'nad3'
+                            else:
+                                row['FILTER'] = row['FILTER'] + ';nad3'
+                    except ValueError: #Handles cases if fillout_n_alt is empty or string
+                        pass
+                if 'VSB' in header and 'set' in header and 'fillout_t_alt' in header:
+                    if 'mutect' not in row['set'].lower() and str(row['VSB']) == '1' and int(row['fillout_t_alt']) > 10 and (int(row['fillout_t_forward_alt'])==0 or int(row['fillout_t_reverse_alt']) == 0 ):
                         if row['FILTER'] == 'PASS' or row['FILTER'] == '':
-                            row['FILTER'] = 'nad3'
+                            row['FILTER'] = 'asb'
                         else:
-                            row['FILTER'] = row['FILTER'] + ';nad3'
-                except ValueError: #Handles cases if fillout_n_alt is empty or string
-                    pass
+                            row['FILTER'] = row['FILTER'] + ';asb'
 
             if 'set' in header and 'FAILURE_REASON' in header:  # Fix artifact of bcftools annotate upstream
                 if 'mutect' in row['set'].lower():
