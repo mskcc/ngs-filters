@@ -76,6 +76,8 @@ parse_fillout_maf <- function(maf, fillout, chosen.proportion, min_tpvf) {
                     ':', Tumor_Sample_Barcode)]
 
     # Calculate tumor VAF and from that the required TPVF
+    maf$t_alt_count[maf$t_alt_count=='.'] <- 0
+    maf$t_alt_count<- as.numeric(maf$t_alt_count)
     maf$vaf <- maf$t_alt_count / maf$t_depth
     maf$tpvf <- maf$vaf / chosen.proportion
     maf$tpvf[maf$tpvf < min_tpvf] <- min_tpvf
