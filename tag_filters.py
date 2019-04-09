@@ -78,7 +78,10 @@ def main():
                         for caller in setlist:
                             if caller.lower() != 'mutect':
                                 newsetlist.append(caller)
-                        row['set'] = ','.join(newsetlist)
+                        if len(newsetlist) == 0:
+                            row['set'] = 'MuTect-Rescue'
+                        else:
+                            row['set'] = ','.join(newsetlist)
 
             writer.writerow(row)
 
